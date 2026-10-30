@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUNYO - FINAL PERFECT - 43 Members + 80% Loan</title>
+<style>
+:root{--primary:#0f172a;--green:#059669;--blue:#2563eb;--bg:#f1f5f9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:var(--bg);color:#1e293b}
+.header{background:var(--primary);color:white;padding:16px;position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center}
+.card{background:white;border-radius:14px;padding:14px;margin:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+input,select{width:100%;padding:14px;border:2px solid #0f172a;border-radius:10px;font-size:16px;margin:6px 0;background:white}
+button{padding:13px;border:none;border-radius:10px;font-weight:800;cursor:pointer;width:100%;margin:5px 0}
+.primary{background:#0f172a;color:white}.green{background:#059669;color:white}.blue{background:#2563eb;color:white}.light{background:#e2e8f0}
+.hide{display:none!important}.total{font-size:22px;font-weight:900}.small{font-size:11px;color:#64748b}
+.result{padding:12px;border:2px solid #ddd;border-radius:12px;margin:6px 0;background:#f8fafc;cursor:pointer;display:flex;justify-content:space-between}
+.loan-box{border:2px solid #2563eb;background:#eff6ff;border-radius:12px;padding:12px;margin:8px 0}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;color:white}.bg-green{background:#16a34a}.bg-yellow{background:#ca8a04}
+.row{padding:8px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+table{width:100%;border-collapse:collapse}th,td{padding:6px;border:1px solid #ddd;font-size:12px}th{background:#0f172a;color:white}
+.alert{padding:10px;border-radius:10px;margin:6px 0;font-size:12px}.alert-red{background:#fee2e2;border:2px solid #ef4444;color:#991b1b}.alert-green{background:#dcfce7;border:2px solid #16a34a;color:#166534}
+</style>
+</head>
+<body>
+<div class="header"><div><b>LUNYO - WATEK KI LWAK</b><div style="font-size:10px">43 Members • 10,428,500 • 80% Loan Rule</div></div><span id="headerStats" style="background:#1e40af;padding:6px 10px;border-radius:20px;font-size:11px">43 • UGX 10,428,500</span></div>
+
+<div class="card" style="border:3px solid #059669;text-align:center">
+<div class="small">GRAND TOTAL ACCURATE FROM EXCEL</div>
+<div id="grandTotalMain" style="font-size:26px;font-weight:900;color:#059669">UGX 10,428,500</div>
+<div class="small" id="profitLine">43 Members Accurate</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px">
+<div style="background:#f8fafc;padding:6px;border-radius:8px"><div class="small">Principal</div><div id="statPrincipal" style="font-weight:800;color:blue">UGX 0</div></div>
+<div style="background:#f8fafc;padding:6px;border-radius:8px"><div class="small">Interest 10%</div><div id="statInterest" style="font-weight:800;color:blue">UGX 0</div></div>
+<div style="background:#f8fafc;padding:6px;border-radius:8px"><div class="small">Fee + Profit</div><div id="statProfit" style="font-weight:800;color:green">UGX 0</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3>🔍 Search Member (43 Accurate)</h3>
+<input id="searchInput" placeholder="e.g. Oyuru Benard" oninput="searchMembers()">
+<div id="searchResults"></div>
+<hr style="margin:10px 0"><button class="light" onclick="showAdmin()">🔐 ADMIN LOGIN</button><button class="blue" onclick="showLoans()" style="margin-top:6px">💰 LOANS PAGE - 80% Rule</button>
+</div>
+
+<div id="memberView" class="hide">
+<div class="card" style="border:3px solid #059669">
+<h2 id="memberNameTitle"></h2>
+<div style="background:#f0fdf4;padding:10px;border-radius:8px;margin:6px 0"><div class="small">YOUR SAVINGS (80% Max Loan)</div><div id="memberBal" style="font-size:22px;font-weight:900;color:green"></div><div class="small" id="maxLoanInfo" style="color:blue;font-weight:800"></div></div>
+<button class="light" onclick="goHome()">← Back</button>
+</div>
+<div class="card"><h3>📊 Savings Records - All Weeks Accurate</h3><table id="savingsTable"><tr><th>Month/Week</th><th>Amount</th></tr></table></div>
+<div class="card" style="border:3px solid #2563eb;background:#f0f8ff">
+<h3>💰 Request Loan - 80% Rule + Interest + Fee Separate</h3>
+<div style="background:white;border:2px solid #f59e0b;border-radius:10px;padding:8px;margin:6px 0;font-size:12px"><b>Rule:</b> Max 80% of savings only<br><b>Auto:</b> Interest 10% separate + Fee 5000 separate + Total auto added</div>
+<input id="loanAmount" type="number" placeholder="Loan Amount" oninput="calcMemberLoan()">
+<div id="memberLoanLimit"></div>
+<div id="memberLoanCalc" style="background:white;padding:12px;border-radius:10px;border:2px solid #2563eb;margin:8px 0;text-align:center;color:gray">Enter amount</div>
+<button class="blue" onclick="requestMemberLoan()">📤 SEND LOAN (80% Check)</button>
+<div id="memberLoanStatus"></div>
+<div id="myLoansList" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="loansPage" class="hide">
+<div class="card" style="background:#1e40af;color:white;text-align:center"><h2>💰 LOANS - 80% Rule + Interest + Fee Separate</h2><div id="loansSummary" style="font-weight:800;margin-top:6px">Loans: UGX 0 | Profit: UGX 0</div><button class="light" onclick="goHome()" style="margin-top:8px">← Home</button></div>
+<div class="card" style="border:3px solid #2563eb;background:#f0f8ff">
+<h3>💰 Loan - Dropdown FIXED (43 Accurate)</h3>
+<p class="small" id="loanDebug">Dropdown working</p>
+<select id="loanSelect" onchange="loanSelectChange()"></select>
+<input id="loanPhone" readonly placeholder="Phone auto">
+<input id="loanAmountGlobal" type="number" placeholder="Loan Amount" oninput="calcGlobalLoan()">
+<div id="loanLimitBox"></div>
+<div id="loanCalcBox" style="background:white;padding:12px;border-radius:10px;border:2px solid #2563eb;margin:8px 0;text-align:center;color:gray">Select member + Enter amount</div>
+<button class="blue" onclick="sendGlobalLoan()">📤 SEND LOAN REQUEST</button>
+<div id="loanStatusBox"></div>
+<div id="myLoansGlobal" style="margin-top:10px"></div>
+</div>
+<div class="card"><h3>All Loans - Principal | Interest | Fee | Total Separate</h3><div id="allLoansList"></div></div>
+</div>
+
+<div id="adminLogin" class="hide">
+<div class="card" style="max-width:460px"><h3>🔐 Admin Login</h3><input id="loginEmail" value="admin@lunyo.com"><input id="loginPassword" type="password" value="lunyo123"><button class="primary" onclick="submitLogin()">Log In</button><button class="light" onclick="goHome()" style="margin-top:8px">← Back</button><p class="small">admin@lunyo.com / lunyo123</p></div>
+</div>
+
+<div id="adminDiv" class="hide">
+<div class="card" style="background:#0f172a;color:white"><h2>ADMIN - 43 Members - 80% Rule</h2><div>Grand: <b id="adminGrand" style="color:#4ade80">UGX 10,428,500</b> | Profit: <b id="adminProfit" style="color:#4ade80">UGX 0</b></div><button class="light" onclick="goHome()" style="margin-top:6px">Home</button><button class="blue" onclick="showLoans()" style="margin-top:6px">💰 Loans</button><button class="light" onclick="logoutAdmin()" style="margin-top:6px">Logout</button></div>
+<div class="card" style="border:3px solid #2563eb;background:#eff6ff"><h3>💰 Loan Requests - 80% Rule + Interest + Fee Separate</h3><div id="adminLoans"></div></div>
+<div class="card"><h3>✏️ Edit Savings REPLACE</h3><input id="mName" placeholder="Name"><input id="mPhone" placeholder="Phone"><input id="mTotal" type="number" placeholder="NEW TOTAL"><button class="green" onclick="addMember()">SAVE REPLACE</button></div>
+<div class="card"><h3>All 43 Members - Max 80% Loan</h3><input id="memberFilter" placeholder="Filter..." oninput="render()"><div id="adminMembers"></div></div>
+<div class="card"><h3>Savings Entries</h3><div id="adminSavings" style="max-height:500px;overflow:auto"></div></div>
+</div>
+
+<div id="homeView">
+<div class="card"><h3>✅ LUNYO - FINAL PERFECT COMBINED</h3><p class="small">Top Link: 43 Members Accurate 10,428,500 + Search + Savings + Admin + Feedback<br>Bottom Link Loan Added: 80% Rule + Interest 10% Separate + Fee 5000 Separate + Total Auto Added + Dropdown Fixed</p></div>
+<div class="card"><h3>📋 All 43 Members - Accurate + Max 80% Loan</h3><div id="fullMembersList"></div></div>
+</div>
+
+<script>
+var MEMBERS = [
+{name:"Oyuru Benard",phone:"0785107607",total:370000,details:[["JAN WEEK 4",10000],["MAR WEEK 2",300000],["APR WEEK 3",20000],["JUNE WEEK 4",20000],["DEC WEEK 2",20000]]},
+{name:"Opio Clvin",phone:"0773143405",total:230000,details:[["JAN WEEK1",40000],["JAN WEEK3",60000],["FEB WEEK1",20000],["MAR WEEK1",30000],["APR WEEK1",20000],["MAY WEEK4",10000],["JULY WEEK1",50000]]},
+{name:"Choda Charlse",phone:"0775693534",total:25000,details:[["FEB WEEK1",5000],["MAY WEEK4",20000]]},
+{name:"Ocen moses",phone:"0789887596",total:465000,details:[["JAN WEEK1",15000],["FEB WEEK1",10000],["FEB WEEK4",20000],["MAR WEEK1",20000],["JUNE WEEK2",20000],["AUG WEEK1",30000],["AUG WEEK4",30000],["SEP WEEK2",50000]]},
+{name:"Oyuku Dickens",phone:"0775420262",total:95000,details:[["FEB WEEK4",25000],["MAR WEEK2",10000],["MAY WEEK2",10000],["JUNE WEEK3",26000]]},
+{name:"Adokorach Stella",phone:"0740931151",total:0,details:[]},
+{name:"Dhone Lwarence",phone:"0774106952",total:1200000,details:[["JAN-MAR",500000],["APR-AUG",500000]]},
+{name:"Lrua Sidonia",phone:"0785772021",total:310000,details:[["JAN WEEK4",30000],["FEB WEEK1",30000],["MAR WEEK2",40000],["APR WEEK1",60000],["MAY WEEK1",50000],["OCT WEEK1",50000]]},
+{name:"Opio Tonny Okwor",phone:"0783302588",total:0,details:[]},
+{name:"Dembe Ben",phone:"0763282058",total:190000,details:[["JAN WEEK1",10000],["FEB WEEK1",20000],["MAR WEEK2",10000],["JUNE WEEK1",30000],["JUNE WEEK2",50000],["JUNE WEEK3",70000]]},
+{name:"Okema Bosco",phone:"0778886622",total:204000,details:[["FEB WEEK1",10000],["MAR WEEK2",15000],["JUNE WEEK2",29000],["JULY WEEK1",20000],["AUG WEEK1",20000]]},
+{name:"Omara Bashir",phone:"0772359907",total:149500,details:[["JAN WEEK4",10000],["FEB WEEK3",39500],["FEB WEEK4",60000]]},
+{name:"Ojota Haron",phone:"0760883037",total:205000,details:[["JAN WEEK1",5000],["FEB WEEK4",100000],["MAY WEEK1",50000],["JULY WEEK1",10000],["OCT WEEK4",30000]]},
+{name:"Mama Aisha",phone:"0788605576",total:130000,details:[["FEB WEEK4",100000],["OCT WEEK1",30000]]},
+{name:"Okello Hillary",phone:"0757240422",total:175000,details:[["JAN WEEK1",5000],["JAN WEEK4",20000],["FEB WEEK4",20000],["JUNE WEEK1",20000]]},
+{name:"Opudu Walter",phone:"0778622828",total:128000,details:[["JAN WEEK1",10000],["JAN WEEK4",20000],["FEB WEEK4",20000],["JUNE WEEK1",20000]]},
+{name:"Okello Issac Bet",phone:"0771368808",total:205000,details:[["JAN WEEK1",10000],["JAN WEEK4",20000],["FEB WEEK1",50000],["FEB WEEK4",40000],["JUNE WEEK2",30000]]},
+{name:"Okello Ambrose",phone:"0783014095",total:85000,details:[["JAN WEEK1",15000],["JAN WEEK2",20000],["JAN WEEK3",10000],["JAN WEEK4",30000]]},
+{name:"Okello Jonathan",phone:"0774987163",total:50000,details:[["JAN WEEK2",15000],["JAN WEEK3",15000],["FEB WEEK3",10000],["FEB WEEK4",10000]]},
+{name:"Elwelo Sam",phone:"0777248151",total:107000,details:[["JAN WEEK3",30000],["JAN WEEK4",17000],["JULY WEEK1",10000],["JULY WEEK3",30000]]},
+{name:"Tenga James",phone:"0771406067",total:255000,details:[["JAN WEEK4",10000],["FEB WEEK3",25000],["FEB WEEK4",50000],["AUG WEEK2",70000]]},
+{name:"Okeng Tom",phone:"0776871097",total:820000,details:[["JAN WEEK4",100000],["FEB WEEK1",100000],["JUNE WEEK1",100000],["JULY WEEK1",100000],["JULY WEEK4",100000],["AUG WEEK1",100000]]},
+{name:"Otwal Santos",phone:"0771821770",total:30000,details:[["FEB WEEK2",10000],["FEB WEEK3",5000],["FEB WEEK4",15000]]},
+{name:"Okello Ronald",phone:"0768605926",total:10000,details:[["FEB WEEK1",10000]]},
+{name:"Kyompire Adrine",phone:"0782164034",total:15000,details:[["TOTAL",15000]]},
+{name:"Okwir Emmanuel",phone:"0740818605",total:35000,details:[["JAN WEEK2",5000],["JAN WEEK4",20000]]},
+{name:"Eseru Simon",phone:"0774711693",total:70000,details:[["FEB WEEK2",10000],["FEB WEEK3",10000],["OCT WEEK2",20000]]},
+{name:"Lea Ogwal",phone:"0780000001",total:145000,details:[["FEB WEEK4",45000],["MAR WEEK1",50000],["JUNE WEEK1",50000]]},
+{name:"Ruth",phone:"0789088126",total:320000,details:[["MAR WEEK1",10000],["JULY WEEK2",50000],["OCT WEEK1",50000]]},
+{name:"Odongo Leon",phone:"0785800210",total:30000,details:[["TOTAL",30000]]},
+{name:"Okello Robin",phone:"0780000002",total:50000,details:[["FEB WEEK2",35000],["FEB WEEK3",15000]]},
+{name:"Olweny Moses",phone:"0746248356",total:0,details:[]},
+{name:"Ateng Evalene",phone:"0780000003",total:20000,details:[["JAN WEEK4",10000],["FEB WEEK1",10000]]},
+{name:"Elet Erick",phone:"0782120035",total:530000,details:[["FEB WEEK2",50000],["JUNE WEEK1",100000],["JULY WEEK3",140000],["DEC WEEK2",80000]]},
+{name:"Abura Solomon",phone:"0766229386",total:2795000,details:[["JAN WEEK1",195000],["JAN WEEK2",100000],["JAN WEEK3",150000],["DEC WEEK1",2000000]]},
+{name:"Winny Anyango",phone:"0774632098",total:355000,details:[["JAN WEEK4",5000],["JUNE WEEK1",100000],["JUNE WEEK2",50000],["SEP WEEK1",90000]]},
+{name:"Okello Ambrose Denis",phone:"0772596832",total:0,details:[]},
+{name:"Lukuda John Paul",phone:"0746162257",total:80000,details:[["FEB WEEK1",5000],["JUNE WEEK1",15000],["AUG WEEK1",15000],["AUG WEEK3",22000]]},
+{name:"Ongu Keneth",phone:"07745292996",total:45000,details:[["MAR WEEK2",45000]]},
+{name:"Okello willy",phone:"0700000001",total:80000,details:[["MAR WEEK2",50000],["JUNE WEEK1",30000]]},
+{name:"Omara bonny",phone:"0700000002",total:150000,details:[["MAR WEEK2",5000],["APR WEEK1",10000],["JUNE WEEK1",15000],["JUNE WEEK2",10000]]},
+{name:"Okunya Erick",phone:"0700000003",total:0,details:[]},
+{name:"Omara Calvin",phone:"0700000004",total:270000,details:[["MAR WEEK1",10000],["MAR WEEK2",20000],["MAY WEEK3",50000],["JUNE WEEK2",20000]]}
+];
+var LOANS = JSON.parse(localStorage.getItem('lunyo_final_perfect')||'[]');
+var CURRENT=null;var SELECTED_PHONE='';
+function fmt(n){return Number(n||0).toLocaleString();}
+function grandTotal(){let s=0;for(let m of MEMBERS)s+=m.total;return s;}
+function loanPrincipal(){let s=0;for(let l of LOANS)s+=l.principal;return s;}
+function loanInterest(){let s=0;for(let l of LOANS)s+=l.interest;return s;}
+function loanFees(){let s=0;for(let l of LOANS)s+=l.fee;return s;}
+function profitTotal(){return loanInterest()+loanFees();}
+function maxLoanFor(m){return Math.floor((m.total||0)*0.8);}
+function goHome(){document.getElementById('memberView').classList.add('hide');document.getElementById('adminLogin').classList.add('hide');document.getElementById('adminDiv').classList.add('hide');document.getElementById('loansPage').classList.add('hide');document.getElementById('homeView').classList.remove('hide');document.getElementById('searchInput').value='';document.getElementById('searchResults').innerHTML='';CURRENT=null;render();}
+function showAdmin(){document.getElementById('adminLogin').classList.remove('hide');document.getElementById('homeView').classList.add('hide');document.getElementById('memberView').classList.add('hide');document.getElementById('adminDiv').classList.add('hide');document.getElementById('loansPage').classList.add('hide');}
+function showLoans(){document.getElementById('loansPage').classList.remove('hide');document.getElementById('homeView').classList.add('hide');document.getElementById('memberView').classList.add('hide');document.getElementById('adminLogin').classList.add('hide');document.getElementById('adminDiv').classList.add('hide');render();}
+function searchMembers(){
+let q=document.getElementById('searchInput').value.toLowerCase().trim();
+let div=document.getElementById('searchResults');div.innerHTML='';
+if(q.length<2)return;
+MEMBERS.filter(m=>m.name.toLowerCase().includes(q)).slice(0,8).forEach(m=>{
+let maxLoan=maxLoanFor(m);
+let d=document.createElement('div');d.className='result';
+d.innerHTML=`<div><b>${m.name}</b><br><span class="small">${m.phone} • Savings UGX ${fmt(m.total)} • Max 80% = UGX ${fmt(maxLoan)}</span></div><span>→</span>`;
+d.onclick=()=>{
+CURRENT=m;SELECTED_PHONE=m.phone;
+document.getElementById('memberNameTitle').innerText=m.name+' • '+m.phone;
+document.getElementById('memberBal').innerText='Savings: UGX '+fmt(m.total);
+document.getElementById('maxLoanInfo').innerText='Max Loan 80%: UGX '+fmt(maxLoan);
+let tbl=document.getElementById('savingsTable');
+tbl.innerHTML='<tr><th>Month/Week</th><th>Amount</th></tr>';
+m.details.forEach(r=>{tbl.innerHTML+=`<tr><td>${r[0]}</td><td>UGX ${fmt(r[1])}</td></tr>`;});
+tbl.innerHTML+=`<tr style="background:#f0fdf4;font-weight:900"><td>TOTAL ACCURATE</td><td>UGX ${fmt(m.total)}</td></tr><tr style="background:#dbeafe;font-weight:900"><td>MAX LOAN 80%</td><td>UGX ${fmt(maxLoan)}</td></tr>`;
+document.getElementById('memberView').classList.remove('hide');
+document.getElementById('homeView').classList.add('hide');
+document.getElementById('loanSelect').value=m.phone;
+document.getElementById('loanPhone').value=m.phone;
+loanSelectChange();
+};
+div.appendChild(d);
+});
+}
+function initLoanSelect(){
+let sel=document.getElementById('loanSelect');
+sel.innerHTML='<option value="">-- Select Member (43 Accurate - Dropdown FIXED) --</option>';
+MEMBERS.forEach(m=>{
+let maxLoan=maxLoanFor(m);
+let o=document.createElement('option');o.value=m.phone;o.textContent=`${m.name} - ${m.phone} (Savings UGX ${fmt(m.total)} | Max 80% = UGX ${fmt(maxLoan)})`;
+sel.appendChild(o);
+});
+}
+initLoanSelect();
+function loanSelectChange(){
+let phone=document.getElementById('loanSelect').value;
+SELECTED_PHONE=phone;
+document.getElementById('loanPhone').value=phone;
+let f=MEMBERS.find(x=>x.phone===phone);
+if(f){
+CURRENT=f;
+let maxLoan=maxLoanFor(f);
+document.getElementById('loanDebug').innerText=`Selected: ${f.name} • Savings UGX ${fmt(f.total)} • Max 80% = UGX ${fmt(maxLoan)}`;
+document.getElementById('loanLimitBox').innerHTML=`<div class="alert-green">✅ ${f.name} can borrow up to UGX ${fmt(maxLoan)} (80% of UGX ${fmt(f.total)})</div>`;
+}
+calcGlobalLoan();calcMemberLoan();render();
+}
+function calcMemberLoan(){
+let amt=parseInt(document.getElementById('loanAmount').value)||0;
+let box=document.getElementById('memberLoanCalc');
+let limitBox=document.getElementById('memberLoanLimit');
+if(!CURRENT){box.innerHTML='Search your name first';return;}
+let maxLoan=maxLoanFor(CURRENT);
+if(amt<=0){box.innerHTML=`Savings UGX ${fmt(CURRENT.total)} | Max 80% UGX ${fmt(maxLoan)} | Enter amount`;return;}
+if(amt>maxLoan){box.innerHTML=`<div class="alert-red"><b>❌ EXCEEDS 80% RULE!</b><br>Max UGX ${fmt(maxLoan)} | You: UGX ${fmt(amt)}</div>`;return;}
+let interest=Math.round(amt*0.10);let fee=5000;let total=amt+interest+fee;
+box.innerHTML=`<div style="text-align:left;font-size:13px"><b>✅ AUTO - Stored Separately:</b><br>Principal: UGX ${fmt(amt)} (separate)<br>Interest 10%: <b style="color:blue">UGX ${fmt(interest)}</b> (separate auto)<br>Fee: <b style="color:orange">UGX ${fmt(fee)}</b> (separate auto)<br><b style="color:green">Total: UGX ${fmt(total)}</b> (auto: ${fmt(amt)}+${fmt(interest)}+${fmt(fee)})</div>`;
+if(limitBox) limitBox.innerHTML=`<div class="alert-green">✅ OK UGX ${fmt(amt)} ≤ Max UGX ${fmt(maxLoan)}</div>`;
+}
+function calcGlobalLoan(){
+let amt=parseInt(document.getElementById('loanAmountGlobal').value)||0;
+let box=document.getElementById('loanCalcBox');
+if(!CURRENT){box.innerHTML='Select member from dropdown';return;}
+let maxLoan=maxLoanFor(CURRENT);
+if(amt<=0){box.innerHTML=`Savings UGX ${fmt(CURRENT.total)} | Max 80% UGX ${fmt(maxLoan)}`;return;}
+if(amt>maxLoan){box.innerHTML=`<div class="alert-red"><b>❌ EXCEEDS 80%!</b> Max UGX ${fmt(maxLoan)}</div>`;return;}
+let interest=Math.round(amt*0.10);let fee=5000;let total=amt+interest+fee;
+box.innerHTML=`<div style="text-align:left;font-size:13px"><b>✅ AUTO - Stored Separately:</b><br>Principal UGX ${fmt(amt)} (separate) | Interest UGX ${fmt(interest)} (separate auto) | Fee UGX ${fmt(fee)} (separate auto) | Total UGX ${fmt(total)} (auto)</div>`;
+}
+function requestMemberLoan(){
+let amt=parseInt(document.getElementById('loanAmount').value);
+if(!CURRENT||!amt||amt<10000){alert('Enter min 10,000 and search name');return;}
+let maxLoan=maxLoanFor(CURRENT);
+if(amt>maxLoan){alert(`❌ Exceeds 80%\nMax UGX ${fmt(maxLoan)} | Entered UGX ${fmt(amt)}`);return;}
+let interest=Math.round(amt*0.10);let fee=5000;let total=amt+interest+fee;
+LOANS.push({id:Date.now(),phone:CURRENT.phone,name:CURRENT.name,savingsAtLoan:CURRENT.total,maxAllowed:maxLoan,principal:amt,interest:interest,fee:fee,totalRepayable:total,status:'Pending',date:new Date().toLocaleString(),paid:0,remaining:total});
+localStorage.setItem('lunyo_final_perfect',JSON.stringify(LOANS));
+document.getElementById('memberLoanStatus').innerHTML=`<div style="background:#dcfce7;padding:12px;border:3px solid green;text-align:center"><b>✅ LOAN SENT - 80% OK!</b><br>Principal UGX ${fmt(amt)} (separate) | Interest UGX ${fmt(interest)} (separate) | Fee UGX ${fmt(fee)} (separate) | Total UGX ${fmt(total)} (auto)</div>`;
+document.getElementById('loanAmount').value='';document.getElementById('memberLoanCalc').innerHTML='Enter next amount';setTimeout(()=>{document.getElementById('memberLoanStatus').innerHTML='';},6000);render();
+}
+function sendGlobalLoan(){
+let phone=SELECTED_PHONE||document.getElementById('loanPhone').value;
+let amt=parseInt(document.getElementById('loanAmountGlobal').value);
+if(!phone||!amt||amt<10000){alert('Select member and min 10,000');return;}
+if(!CURRENT){alert('Select member');return;}
+let maxLoan=maxLoanFor(CURRENT);
+if(amt>maxLoan){alert(`❌ Exceeds 80% Max UGX ${fmt(maxLoan)}`);return;}
+let interest=Math.round(amt*0.10);let fee=5000;let total=amt+interest+fee;
+LOANS.push({id:Date.now(),phone:phone,name:CURRENT.name,savingsAtLoan:CURRENT.total,maxAllowed:maxLoan,principal:amt,interest:interest,fee:fee,totalRepayable:total,status:'Pending',date:new Date().toLocaleString(),paid:0,remaining:total});
+localStorage.setItem('lunyo_final_perfect',JSON.stringify(LOANS));
+document.getElementById('loanStatusBox').innerHTML=`<div style="background:#dcfce7;padding:12px;border:3px solid green;text-align:center"><b>✅ LOAN SENT!</b><br>Principal UGX ${fmt(amt)} | Interest UGX ${fmt(interest)} | Fee UGX ${fmt(fee)} | Total UGX ${fmt(total)}</div>`;
+document.getElementById('loanAmountGlobal').value='';document.getElementById('loanCalcBox').innerHTML='Enter next';setTimeout(()=>{document.getElementById('loanStatusBox').innerHTML='';},5000);render();
+}
+function submitLogin(){
+let e=document.getElementById('loginEmail').value.trim();
+let p=document.getElementById('loginPassword').value.trim();
+if(e==='admin@lunyo.com' && p==='lunyo123'){
+document.getElementById('adminLogin').classList.add('hide');
+document.getElementById('adminDiv').classList.remove('hide');
+document.getElementById('homeView').classList.add('hide');
+render();
+}else{alert('Use admin@lunyo.com / lunyo123');}
+}
+function logoutAdmin(){document.getElementById('adminDiv').classList.add('hide');document.getElementById('homeView').classList.remove('hide');}
+function addMember(){
+let n=document.getElementById('mName').value.trim();
+let p=document.getElementById('mPhone').value.trim();
+let tot=parseInt(document.getElementById('mTotal').value);
+if(!n||!p||isNaN(tot)){alert('Fill all');return;}
+let ex=MEMBERS.find(m=>m.phone.slice(-9)===p.slice(-9));
+if(ex){ex.name=n;ex.phone=p;ex.total=tot;ex.details=[["EDITED",tot]];}else{MEMBERS.push({name:n,phone:p,total:tot,details:[["NEW",tot]]});}
+document.getElementById('mName').value='';document.getElementById('mPhone').value='';document.getElementById('mTotal').value='';
+initLoanSelect();render();alert('Saved: '+n);
+}
+function render(){
+let gt=grandTotal();let principal=loanPrincipal();let interest=loanInterest();let fees=loanFees();let profit=profitTotal();
+document.getElementById('headerStats').innerText=`43 MEMBERS • UGX ${fmt(gt)} • LOANS UGX ${fmt(principal)}`;
+document.getElementById('grandTotalMain').innerText='UGX '+fmt(gt);
+document.getElementById('profitLine').innerText=`${MEMBERS.length} Members • Grand UGX ${fmt(gt)} • Principal UGX ${fmt(principal)} • Interest UGX ${fmt(interest)} + Fee UGX ${fmt(fees)} = Profit UGX ${fmt(profit)}`;
+document.getElementById('statPrincipal').innerText='UGX '+fmt(principal);
+document.getElementById('statInterest').innerText='UGX '+fmt(interest);
+document.getElementById('statProfit').innerText='UGX '+fmt(profit);
+let adminGrand=document.getElementById('adminGrand');if(adminGrand) adminGrand.innerText='UGX '+fmt(gt);
+let adminProfit=document.getElementById('adminProfit');if(adminProfit) adminProfit.innerText='UGX '+fmt(profit);
+let loansSummary=document.getElementById('loansSummary');if(loansSummary) loansSummary.innerText=`Principal: UGX ${fmt(principal)} | Interest: UGX ${fmt(interest)} | Fee: UGX ${fmt(fees)} | Profit: UGX ${fmt(profit)} | Total Repayable: UGX ${fmt(principal+interest+fees)}`;
+let fullList=document.getElementById('fullMembersList');
+fullList.innerHTML=MEMBERS.map(m=>{
+let maxLoan=maxLoanFor(m);
+return `<div class="row"><div><b>${m.name}</b><br><span class="small">${m.phone} • Savings UGX ${fmt(m.total)} • Max 80% = UGX ${fmt(maxLoan)}</span></div><div style="text-align:right"><b>UGX ${fmt(m.total)}</b><br><button class="blue" style="width:auto;padding:4px 8px;font-size:11px" onclick="document.getElementById('loanSelect').value='${m.phone}';loanSelectChange();showLoans()">Loan</button></div></div>`;
+}).join('');
+let adminMembersDiv=document.getElementById('adminMembers');
+if(adminMembersDiv){
+let filter=document.getElementById('memberFilter')?document.getElementById('memberFilter').value.toLowerCase():'';
+adminMembersDiv.innerHTML=MEMBERS.filter(m=>!filter||m.name.toLowerCase().includes(filter)).map(m=>{
+let maxLoan=maxLoanFor(m);
+return `<div class="row"><div><b>${m.name}</b><br><span class="small">${m.phone} • Savings UGX ${fmt(m.total)} • Max 80% UGX ${fmt(maxLoan)}</span></div><div><button class="light" style="width:auto;padding:6px" onclick="document.getElementById('mName').value='${m.name}';document.getElementById('mPhone').value='${m.phone}';document.getElementById('mTotal').value=${m.total}">Edit</button></div></div>`;
+}).join('');
+}
+let adminSavingsDiv=document.getElementById('adminSavings');
+if(adminSavingsDiv){
+let html='';
+MEMBERS.forEach(m=>{if(m.details.length>0){html+=`<div style="margin:8px 0"><b>${m.name} - UGX ${fmt(m.total)} - Max 80% UGX ${fmt(maxLoanFor(m))}</b><table><tr><th>Month/Week</th><th>Amount</th></tr>`;m.details.forEach(d=>{html+=`<tr><td>${d[0]}</td><td>UGX ${fmt(d[1])}</td></tr>`;});html+=`</table></div>`;}});
+adminSavingsDiv.innerHTML=html||'No entries';
+}
+let allLoansHtml = LOANS.length?LOANS.slice().reverse().map(l=>`
+<div class="loan-box">
+<b>${l.name}</b> • ${l.phone}<br>
+Savings UGX ${fmt(l.savingsAtLoan)} | Max 80% UGX ${fmt(l.maxAllowed)} | Borrowed UGX ${fmt(l.principal)} ${l.principal<=l.maxAllowed?'✅':'❌'}<br>
+<div style="font-size:11px;background:white;padding:6px;border-radius:6px;margin:4px 0">
+Principal: UGX ${fmt(l.principal)} (stored separate)<br>
+Interest 10%: UGX ${fmt(l.interest)} (stored separate - auto)<br>
+Fee: UGX ${fmt(l.fee)} (stored separate - auto)<br>
+<b>Total Repayable: UGX ${fmt(l.totalRepayable)} (auto: ${fmt(l.principal)}+${fmt(l.interest)}+${fmt(l.fee)})</b>
+</div>
+<span class="badge ${l.status==='Approved'?'bg-green':'bg-yellow'}">${l.status}</span> ${l.date} | Paid: UGX ${fmt(l.paid)} | Remaining: UGX ${fmt(l.remaining)}
+</div>`).join(''):'<p class="small">No loans yet - Dropdown FIXED - 80% rule + Interest + Fee separate</p>';
+let allLoansList=document.getElementById('allLoansList');
+if(allLoansList) allLoansList.innerHTML=allLoansHtml;
+let myLoansList=document.getElementById('myLoansList');
+if(myLoansList && CURRENT){
+let my=LOANS.filter(l=>l.phone.slice(-9)===CURRENT.phone.slice(-9));
+myLoansList.innerHTML=my.length?`<h4>My Loans - Max 80% UGX ${fmt(maxLoanFor(CURRENT))}</h4>`+my.map(l=>`<div class="loan-box"><b>Principal UGX ${fmt(l.principal)}</b> (separate) | Interest UGX ${fmt(l.interest)} (separate) | Fee UGX ${fmt(l.fee)} (separate) | Total UGX ${fmt(l.totalRepayable)} (auto)<br><span class="badge ${l.status==='Approved'?'bg-green':'bg-yellow'}">${l.status}</span></div>`).join(''):`<p class="small">No loans for ${CURRENT.name}</p>`;
+}
+let myLoansGlobal=document.getElementById('myLoansGlobal');
+if(myLoansGlobal && CURRENT){
+let my=LOANS.filter(l=>l.phone.slice(-9)===CURRENT.phone.slice(-9));
+myLoansGlobal.innerHTML=my.length?my.map(l=>`<div class="loan-box"><b>Principal UGX ${fmt(l.principal)}</b> | Interest UGX ${fmt(l.interest)} | Fee UGX ${fmt(l.fee)} | Total UGX ${fmt(l.totalRepayable)}</div>`).join(''):'';
+}
+let adminLoansDiv=document.getElementById('adminLoans');
+if(adminLoansDiv) adminLoansDiv.innerHTML=LOANS.length?LOANS.slice().reverse().map(l=>`
+<div class="loan-box">
+<b>${l.name} (${l.phone})</b><br>
+Savings UGX ${fmt(l.savingsAtLoan)} | Max 80% UGX ${fmt(l.maxAllowed)} | Principal UGX ${fmt(l.principal)}<br>
+<div style="font-size:11px;background:white;padding:6px;border-radius:6px">
+Principal: UGX ${fmt(l.principal)} (separate)<br>
+Interest: UGX ${fmt(l.interest)} (separate auto)<br>
+Fee: UGX ${fmt(l.fee)} (separate auto)<br>
+<b>Total: UGX ${fmt(l.totalRepayable)} (auto: ${fmt(l.principal)}+${fmt(l.interest)}+${fmt(l.fee)})</b><br>
+Paid: UGX ${fmt(l.paid)} | Remaining: UGX ${fmt(l.remaining)}
+</div>
+<span class="badge ${l.status==='Approved'?'bg-green':'bg-yellow'}">${l.status}</span><br>
+<div style="display:flex;gap:6px;margin-top:6px">
+<button class="green" style="width:auto;padding:6px" onclick="let lo=LOANS.find(x=>x.id==${l.id});lo.status='Approved';localStorage.setItem('lunyo_final_perfect',JSON.stringify(LOANS));render();">Approve</button>
+<button class="blue" style="width:auto;padding:6px" onclick="let a=prompt('Pay amount:',0);if(a!==null){let lo=LOANS.find(x=>x.id==${l.id});lo.paid+=parseInt(a)||0;lo.remaining=lo.totalRepayable-lo.paid;if(lo.paid>=lo.totalRepayable)lo.status='Completed';localStorage.setItem('lunyo_final_perfect',JSON.stringify(LOANS));render();}}">Pay</button>
+<button class="light" style="width:auto;padding:6px;background:#ef4444;color:white" onclick="if(confirm('Delete?')){LOANS=LOANS.filter(x=>x.id!=${l.id});localStorage.setItem('lunyo_final_perfect',JSON.stringify(LOANS));render();}}">Del</button>
+</div>
+</div>`).join(''):'<p class="small">No loan requests - 80% rule active</p>';
+}
+render();
+</script>
+</body>
+</html>
