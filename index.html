@@ -1,52 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WATEK KI LWAK - REAL CLOUD LIVE ID 9a760c9d</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>WATEK KI LWAK - REAL APP</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#eef2f7;padding:10px}.banner{background:linear-gradient(90deg,#0284c7,#16a34a);color:#fff;padding:14px;text-align:center;border-radius:12px;font-weight:900;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.card{background:#fff;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 10px rgba(0,0,0,0.08)}.total{font-size:30px;font-weight:900;color:#0284c7;text-align:center}.btn{background:#0284c7;color:#fff;border:none;padding:13px;width:100%;border-radius:10px;font-weight:800;cursor:pointer}input{width:100%;padding:12px;margin:6px 0;border:1px solid #d1d5db;border-radius:8px}.member{display:flex;justify-content:space-between;border-bottom:1px solid #f0f0f0;padding:10px 0}.badge{display:inline-block;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700}.live{color:#16a34a;font-weight:800;font-size:11px;text-align:center}</style>
 </head>
-<body>
-<div class="banner">☁️ CLOUD LIVE • ID: 9a760c9d • REAL FIREBASE SYNC<br>Cloud ID: 9a760c9d-9c42-401a-b381-5dc9a65d79a3 • DATA SAFE</div>
-<div class="card"><div class="live" id="sync">🔄 Connecting...</div><div class="total" id="grand">GRAND TOTAL IS 0</div></div>
-<div class="card"><h3>💾 Add Member - Saves to REAL Cloud</h3><input id="name" placeholder="Name e.g. Okeng Tom"><input id="phone" placeholder="Phone e.g. 776871097"><input id="amt" type="number" placeholder="Amount"><button class="btn" onclick="addMember()">💾 SAVE TO REAL CLOUD ID: 9a760c9d</button></div>
-<div class="card"><h3>Members - Live from Real Cloud</h3><div id="list">Loading...</div></div>
+<body style="font-family:system-ui;background:#eef2f7;margin:0;padding:10px">
+<div style="background:linear-gradient(90deg,#0284c7,#16a34a);color:#fff;padding:14px;text-align:center;border-radius:12px;font-weight:900;position:sticky;top:0;z-index:10">
+☁️ REAL APP LIVE • ID: 9a760c9d • v9-FINAL<br>
+<small id="status">Connecting...</small>
+</div>
+<div style="background:#fff;border-radius:14px;padding:16px;margin:12px 0;text-align:center">
+<div id="grand" style="font-size:32px;font-weight:900;color:#0284c7">GRAND TOTAL IS ...</div>
+<div style="font-size:11px;color:#666">Auto-sync like WhatsApp • No refresh needed</div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:16px;margin:12px 0">
+<input id="name" placeholder="Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box">
+<input id="phone" placeholder="Phone" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box">
+<input id="amt" type="number" placeholder="Amount" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box">
+<button onclick="addMember()" style="background:#0284c7;color:#fff;border:none;padding:14px;width:100%;border-radius:10px;font-weight:800;font-size:16px">💾 SAVE - Everyone Sees Instantly</button>
+</div>
+<div style="background:#fff;border-radius:14px;padding:16px;margin:12px 0">
+<h3 style="margin:0 0 10px">Live Members (<span id="count">0</span>)</h3>
+<div id="list">Loading Real Cloud...</div>
+</div>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCRTAwmD87np-5RDm1E73hKqOj262e-XzI",
-  authDomain: "watek-ki-lwak.firebaseapp.com",
-  databaseURL: "https://watek-ki-lwak-default-rtdb.firebaseio.com",
-  projectId: "watek-ki-lwak",
-  storageBucket: "watek-ki-lwak.firebasestorage.app",
-  messagingSenderId: "209092145807",
-  appId: "1:209092145807:web:6678121395351ea41036fa",
-  measurementId: "G-P0VLGRQ76F"
-};
+// FORCE REMOVE OLD SERVICE WORKERS AND CACHE - Like WhatsApp update
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(reg=>reg.unregister()));}
+if(window.caches){caches.keys().then(k=>k.forEach(n=>caches.delete(n)));}
+localStorage.clear(); sessionStorage.clear();
+
+const firebaseConfig={apiKey:"AIzaSyCRTAwmD87np-5RDm1E73hKqOj262e-XzI",authDomain:"watek-ki-lwak.firebaseapp.com",databaseURL:"https://watek-ki-lwak-default-rtdb.firebaseio.com",projectId:"watek-ki-lwak",storageBucket:"watek-ki-lwak.firebasestorage.app",messagingSenderId:"209092145807",appId:"1:209092145807:web:6678121395351ea41036fa"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const PATH = "clouds/9a760c9d-9c42-401a-b381-5dc9a65d79a3/members";
+const db=firebase.database();
+const PATH="clouds/9a760c9d-9c42-401a-b381-5dc9a65d79a3/members";
 let members=[];
-function start(){
- db.ref(PATH).on('value', snap=>{
-   const val=snap.val(); members=val?Object.values(val):[]; render();
-   document.getElementById('sync').innerHTML="✅ REAL CLOUD LIVE • ID: 9a760c9d • Online All Time • "+members.length+" members • Firebase Connected";
- }, err=>{document.getElementById('sync').innerHTML="❌ Error: "+err.message;});
-}
-function render(){
- let total=0; const list=document.getElementById('list'); list.innerHTML="";
- if(members.length===0){list.innerHTML="<div style='padding:10px;color:#666'>No members yet in Real Cloud. Add first member!</div>";}
- members.forEach(m=>{total+=parseInt(m.amount||0); const d=document.createElement('div'); d.className="member"; d.innerHTML=`<span><b>${m.name}</b> <span class='badge'>CLOUD</span><br><small>📞 ${m.phone}</small></span><span style='font-weight:800'>${Number(m.amount).toLocaleString()}</span>`; list.appendChild(d);});
- document.getElementById('grand').innerText="GRAND TOTAL IS "+total.toLocaleString();
-}
+db.ref(PATH).on('value',snap=>{
+  const val=snap.val(); members=val?Object.values(val):[];
+  let total=0; const list=document.getElementById('list'); list.innerHTML="";
+  members.forEach(m=>{total+=parseInt(m.amount||0); list.innerHTML+=`<div style='display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee'><span><b>${m.name}</b><br><small>${m.phone}</small></span><b style='color:#0284c7'>${Number(m.amount).toLocaleString()}</b></div>`;});
+  document.getElementById('grand').innerText="GRAND TOTAL IS "+total.toLocaleString();
+  document.getElementById('count').innerText=members.length;
+  document.getElementById('status').innerText="✅ REAL APP LIVE • "+members.length+" members • Online Now • Instant Sync";
+},err=>{document.getElementById('status').innerText="❌ Rules Error - Set Rules to true";});
 function addMember(){
- const name=document.getElementById('name').value.trim(); const phone=document.getElementById('phone').value.trim(); const amount=document.getElementById('amt').value.trim();
- if(!name||!phone||!amount){alert("Fill all");return;}
- const id=Date.now(); const obj={id,name,phone,amount:parseInt(amount),cloudId:"9a760c9d-9c42-401a-b381-5dc9a65d79a3",created:new Date().toISOString()};
- db.ref(PATH+"/"+id).set(obj).then(()=>{alert("✅ SAVED TO REAL FIREBASE CLOUD! ID: 9a760c9d - Online Forever!"); document.getElementById('name').value="";document.getElementById('phone').value="";document.getElementById('amt').value="";});
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const amount=document.getElementById('amt').value.trim();
+  if(!name||!phone||!amount){alert("Fill all");return;}
+  db.ref(PATH+"/"+Date.now()).set({id:Date.now(),name,phone,amount:parseInt(amount)}).then(()=>{
+    alert("✅ Saved! Everyone will see it NOW!");
+    document.getElementById('name').value="";document.getElementById('phone').value="";document.getElementById('amt').value="";
+  });
 }
-start();
 </script>
 </body>
 </html>
