@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WATEK KI LWAK - LIVE V55 - 10% + 5000 FEE</title>
+<title>WATEK KI LWAK - V56 ROLES + OVERDUE AUTO</title>
 <meta name="theme-color" content="#0f172a">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -24,8 +24,11 @@ canvas{border:3px solid #111;border-radius:12px;background:#fff;width:100%;heigh
 .cloud-badge{background:#22c55e;color:#000;padding:6px 14px;border-radius:20px;font-weight:900;font-size:12px;display:inline-block;margin:8px 0}
 .secret-box{border:4px solid #ef4444;background:#1e1b4b;color:#fff;padding:14px;border-radius:14px;margin:14px 0}
 .private-box{border:3px solid #1e40af;background:#eff6ff;padding:12px;border-radius:12px;margin:10px 0}
+.overdue-box{border:3px solid #ef4444;background:#fef2f2;padding:12px;border-radius:12px;margin:10px 0}
 .fee-box{background:#fff7ed;border:2px solid #ea580c;padding:10px;border-radius:10px;font-size:13px;margin:8px 0}
 table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid #000;padding:6px;text-align:center}th{background:#0f172a;color:#fde047}
+.badge-overdue{background:#ef4444;color:#fff;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:900}
+.badge-ok{background:#22c55e;color:#fff;padding:4px 8px;border-radius:20px;font-size:11px}
 .live-dot{width:10px;height:10px;background:#22c55e;border-radius:50%;display:inline-block;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}
 </style>
 </head>
@@ -41,29 +44,36 @@ table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid 
 <div id="publicPage">
 <div class="card" style="border:3px solid #059669">
 <h2 style="color:#059669;margin:0 0 12px 0">Member Login</h2>
-<p style="font-size:12px;color:#666">Type your name - Amount is hidden until you login.</p>
+<p style="font-size:12px;color:#666">Type your name - Amount hidden until login.</p>
 <div class="searchWrap"><input id="memberName" type="text" placeholder="Type your name ONLY" oninput="searchName()" autocomplete="off"><div id="suggestBox" class="hide"></div></div>
 <input id="memberPhone" type="password" placeholder="Phone - Optional">
-<button onclick="memberLogin()" class="btn-green">LOGIN - Click to Open Account</button>
+<button onclick="memberLogin()" class="btn-green">LOGIN</button>
 <div style="display:flex;gap:8px;margin-top:10px"><button onclick="showAll()" class="btn-blue" style="flex:1">Show All Members - Names Only</button><button onclick="forceSync()" class="btn-gray" style="flex:1">🔄 Sync</button></div>
 <div id="allList" class="hide" style="max-height:400px;overflow:auto;border:3px solid #059669;padding:10px;margin-top:10px;background:#f0f4f8;border-radius:12px"></div>
 </div>
 <div class="card notif-box"><h3 style="color:#ea580c;margin-top:0">Notification - From Admin</h3><div id="homeNotifs"></div></div>
-<div class="card feedback-box"><h3 style="color:#7c3aed;margin-top:0">Feedback</h3><textarea id="fbMain" placeholder="Type feedback" rows="3" style="border:3px solid #7c3aed"></textarea><button onclick="sendFB('main')" class="btn-purple">Send Feedback</button><div id="fbMainList"></div></div>
+<div class="card feedback-box"><h3 style="color:#7c3aed;margin-top:0">Feedback</h3><textarea id="fbMain" placeholder="Type feedback" rows="3"></textarea><button onclick="sendFB('main')" class="btn-purple">Send Feedback</button><div id="fbMainList"></div></div>
 <div class="card" style="background:#1e1b4b;text-align:center"><button onclick="goAdmin()" class="btn-yellow" style="width:auto;padding:12px 24px">Admin Sign In</button></div>
 </div>
 
 <!-- MEMBER PAGE -->
 <div id="memberPage" class="hide">
 <div class="card" style="background:#0f172a;color:#fff;text-align:center"><h2 style="color:#fde047;margin:0">Welcome <span id="mNameShow"></span></h2><p style="color:#86efac">*** Live Account ***</p><button onclick="logoutMember()" class="btn-gray" style="width:auto;padding:10px 20px;margin-top:10px">Logout</button></div>
-<div class="card" style="border:3px solid #1e40af;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">🔔 Your Private Notifications - Loans Admin Reminder</h3><div id="myTransNotifs"></div></div>
+<div class="card" style="border:3px solid #1e40af;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">🔔 Your Private Notifications - Loans Admin Only</h3><div id="myTransNotifs"></div></div>
 <div class="card notif-box"><h3 style="color:#ea580c;margin-top:0">Notification - General</h3><div id="myAdminNotifs"></div></div>
-<div class="card" style="border:3px solid #059669"><h2 style="text-align:center;color:#059669;margin:0">Your Savings</h2><div style="background:#f0fdf4;border:3px solid #059669;border-radius:14px;padding:15px;text-align:center;margin:10px 0"><div style="font-size:44px;font-weight:900;color:#059669" id="mySavings">0</div><div>Max Loan 80%: <b id="myMax"></b></div><div style="font-size:11px;color:#666">Loan: 10% Interest + 5000 Processing Fee - Updates Live</div></div>
+<div class="card" style="border:3px solid #059669"><h2 style="text-align:center;color:#059669;margin:0">Your Savings</h2><div style="background:#f0fdf4;border:3px solid #059669;border-radius:14px;padding:15px;text-align:center;margin:10px 0"><div style="font-size:44px;font-weight:900;color:#059669" id="mySavings">0</div><div>Max Loan 80%: <b id="myMax"></b></div><div style="font-size:11px;color:#666">Loan: 10% Interest + 5000 Fee</div></div>
 <div style="text-align:center"><button onclick="toggleSavingsRecord()" class="btn-yellow" style="font-size:16px;padding:16px">Click here to see your savings record</button></div>
 <div id="savingsRecordBox" class="hide" style="margin-top:12px;border:3px solid #fde047;padding:14px;background:#fffbe6"><div id="savingsRecordDetails"></div></div>
 <div style="text-align:center;margin-top:16px"><button onclick="toggleLoan()" class="btn-blue" style="font-size:18px;padding:18px">Click here to apply for a loan - 10% + 5000 Fee</button></div>
-<div id="loanForm" class="hide" style="margin-top:16px;border:3px solid #1e40af;padding:16px;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">Loan Application - 10% Interest + 5000 Fee</h3><input id="loanAmt" type="number" placeholder="Loan amount" oninput="previewLoan()"><input id="loanDate" type="date"><div class="fee-box"><b>Loan Rules:</b><br>Interest: <b>10%</b> of loan<br>Processing Fee: <b>Fixed 5000</b><br>Total to Repay = Loan + 10% + 5000</div><div class="sig-wrap"><p style="font-weight:800">Signature</p><canvas id="sigCanvas" width="700" height="200"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn-red" style="flex:1" onclick="clearSig()">Clear</button><button type="button" class="btn-green" style="flex:1" onclick="saveSig()">Save</button></div></div><div id="loanPreview" style="background:#fff;padding:12px;border-radius:10px;margin:8px 0;border:2px solid #1e40af"></div><button onclick="applyLoan()" class="btn-blue">Submit</button><button onclick="toggleLoan()" class="btn-gray" style="margin-top:8px">Close</button><div id="loanMsg"></div></div></div>
-<div class="card" style="border:3px solid #1e40af;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">Your Loans - 10% + 5000 Fee - Live</h3><div id="myLoansList"></div></div>
+<div id="loanForm" class="hide" style="margin-top:16px;border:3px solid #1e40af;padding:16px;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">Loan Application - Must Choose Repayment Period</h3>
+<input id="loanAmt" type="number" placeholder="Loan amount" oninput="previewLoan()">
+<label style="font-size:12px;font-weight:800">Loan Date</label><input id="loanDate" type="date">
+<label style="font-size:12px;font-weight:800">Repayment Period - REQUIRED</label>
+<select id="loanPeriod" onchange="calcDueDate();previewLoan()"><option value="">-- Select Period --</option><option value="7">1 Week - 7 Days</option><option value="14">2 Weeks - 14 Days</option><option value="30">1 Month - 30 Days</option><option value="60">2 Months - 60 Days</option><option value="90">3 Months - 90 Days</option></select>
+<label style="font-size:12px;font-weight:800">Repayment Due Date - Auto Calculated</label><input id="loanDueDate" type="date" readonly style="background:#fef9c3">
+<div class="fee-box"><b>Formula:</b> Total = Loan + 10% Interest + 5000 Fee<br><b>If Due Date passes and not fully repaid → OVERDUE + Automatic Private Notification to you only.</b></div>
+<div class="sig-wrap"><p style="font-weight:800">Signature</p><canvas id="sigCanvas" width="700" height="200"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn-red" style="flex:1" onclick="clearSig()">Clear</button><button type="button" class="btn-green" style="flex:1" onclick="saveSig()">Save</button></div></div><div id="loanPreview" style="background:#fff;padding:12px;border-radius:10px;margin:8px 0;border:2px solid #1e40af"></div><button onclick="applyLoan()" class="btn-blue">Submit</button><button onclick="toggleLoan()" class="btn-gray" style="margin-top:8px">Close</button><div id="loanMsg"></div></div></div>
+<div class="card" style="border:3px solid #1e40af;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">Your Loans - 10% + 5000 - Live</h3><div id="myLoansList"></div></div>
 <div class="card feedback-box"><h3 style="color:#7c3aed;margin-top:0">Feedback</h3><textarea id="fbMember" placeholder="Type feedback" rows="3"></textarea><button onclick="sendFB('member')" class="btn-purple">Send Feedback</button><div id="fbMemberList"></div></div>
 </div>
 
@@ -71,26 +81,36 @@ table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid 
 <div id="adminPage" class="hide">
 <div class="card" style="background:#0f172a;color:#fff;text-align:center"><h2 style="color:#fde047;margin:0" id="adminTitle">Admin Panel - LIVE</h2><div class="grand" id="adminGrand">GRAND TOTAL IS 0</div><div id="adminInfo" style="margin-top:8px;font-size:11px;color:#86efac"></div>
 <div class="card" id="lunyoCheckBox" style="border:3px solid #22c55e;background:#f0fdf4;padding:10px;margin-top:10px;text-align:left;color:#000"><h3 style="color:#059669;margin:0">🔔 Secret - Lunyo Only - Members Who Checked Account</h3><div id="balanceChecksList"></div><button onclick="clearBalanceChecks()" class="btn-gray" style="width:auto;padding:6px 12px;font-size:11px">Clear</button></div>
-<div class="secret-box" id="lunyoSecretStorage"><h3 style="color:#fde047;margin:0">🔒 SECRET STORAGE - LUNYO ONLY</h3><p style="font-size:12px">Loan applications stored here secretly.</p><button onclick="toggleSecretLoans()" class="btn-yellow" style="font-size:16px;padding:16px">Click here to see loans records</button><div id="secretLoansBox" class="hide" style="margin-top:12px;background:#fff;color:#000;padding:12px;border-radius:10px;max-height:600px;overflow:auto"></div></div>
+<!-- LUNYO SECRET: WHO TOOK, WHO REPAID, ACCUMULATIVE INTEREST -->
+<div class="secret-box" id="lunyoSecretStorage"><h3 style="color:#fde047;margin:0">🔒 SECRET STORAGE - LUNYO ONLY</h3><p style="font-size:12px">Who took loans, who repaid, accumulative interest - Secret. Interest adds automatic.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin:10px 0"><div style="background:#fff;color:#000;padding:10px;border-radius:10px"><small>Total Interest<br>Accumulated</small><b id="secretTotalInterest" style="display:block;font-size:18px;color:#ea580c">0</b></div><div style="background:#fff;color:#000;padding:10px;border-radius:10px"><small>Interest<br>From Paid Loans</small><b id="secretPaidInterest" style="display:block;font-size:18px;color:green">0</b></div><div style="background:#fff;color:#000;padding:10px;border-radius:10px"><small>Interest<br>Still Owing</small><b id="secretOwingInterest" style="display:block;font-size:18px;color:red">0</b></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center"><div style="background:#fff;color:#000;padding:10px;border-radius:10px"><small>Who Took Loans</small><b id="secretTookCount" style="display:block">0 members</b></div><div style="background:#fff;color:#000;padding:10px;border-radius:10px"><small>Who Fully Repaid</small><b id="secretRepaidCount" style="display:block">0 members</b></div></div>
+<button onclick="toggleSecretLoans()" class="btn-yellow" style="font-size:16px;padding:16px;margin-top:10px">Click here to see loans records</button><div id="secretLoansBox" class="hide" style="margin-top:12px;background:#fff;color:#000;padding:12px;border-radius:10px;max-height:600px;overflow:auto"></div></div>
 <button onclick="logoutAdmin()" class="btn-gray" style="width:auto;padding:10px 20px;margin-top:10px">Logout</button></div>
 
-<div class="card" id="loansAdminBox" style="border:4px solid #1e40af;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">💰 LOANS ADMIN - Full Loan Control - 10% + 5000 Fee</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center"><div style="background:#fff;padding:10px;border-radius:10px"><small>Total Lent (with 10%+5000)</small><b id="loanTotalLent" style="display:block;font-size:18px">0</b></div><div style="background:#fff;padding:10px;border-radius:10px"><small>Total Repaid</small><b id="loanTotalRepaid" style="display:block;font-size:18px;color:green">0</b></div><div style="background:#fff;padding:10px;border-radius:10px"><small>Still Owing</small><b id="loanTotalOwing" style="display:block;font-size:18px;color:red">0</b></div></div>
-<h4 style="margin-top:14px">Track Repayment - Who Still Owes</h4><div id="loanTrackList" style="max-height:400px;overflow:auto"></div>
-<h4 style="margin-top:14px">Send Private Reminder - Only That Member Sees It</h4>
-<select id="remindMem"><option value="">Select member who took loan</option></select>
-<textarea id="remindText" placeholder="e.g. Hello, your loan balance is due. Please repay. - Loans Admin" rows="3"></textarea>
-<button onclick="sendPrivateReminder()" class="btn-blue">Send Private Reminder To This Member Only</button>
+<!-- LOANS ADMIN ONLY: PRIVATE REMINDER FOR OVERDUE -->
+<div class="card" id="loansAdminBox" style="border:4px solid #1e40af;background:#eff6ff"><h3 style="color:#1e40af;margin-top:0">💰 LOANS ADMIN - Full Loan Control - 10% + 5000</h3>
+<p style="font-size:12px;color:#666">Only Loans Admin can send overdue reminders. Savings Admin cannot.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center"><div style="background:#fff;padding:10px;border-radius:10px"><small>Total Lent</small><b id="loanTotalLent" style="display:block;font-size:18px">0</b></div><div style="background:#fff;padding:10px;border-radius:10px"><small>Total Repaid</small><b id="loanTotalRepaid" style="display:block;font-size:18px;color:green">0</b></div><div style="background:#fff;padding:10px;border-radius:10px"><small>Still Owing</small><b id="loanTotalOwing" style="display:block;font-size:18px;color:red">0</b></div></div>
+<h4>Track Repayment - Overdue Shows Automatically</h4><div id="loanTrackList"></div>
+<h4 style="margin-top:14px">Send Private Reminder For Overdue Loan - Only That Member Sees It</h4>
+<select id="remindMem"><option value="">Select overdue member</option></select>
+<textarea id="remindText" placeholder="e.g. Hello, your loan is OVERDUE. Please repay immediately. - Loans Admin" rows="3"></textarea>
+<button onclick="sendPrivateReminder()" class="btn-blue">Send Private Overdue Reminder - Loans Admin Only</button>
 <div id="remindMsg" style="font-size:12px;margin-top:8px"></div>
 </div>
 
-<div class="card notif-box"><h3 style="color:#ea580c;margin-top:0">Notification - Broadcast</h3><textarea id="adminBroad" placeholder="Type notification" rows="4" style="border:3px solid #ea580c"></textarea><button onclick="sendBroadcast()" class="btn-orange">Broadcast - Send to All</button><div id="broadList"></div></div>
+<div class="card notif-box"><h3 style="color:#ea580c;margin-top:0">Notification - Broadcast</h3><textarea id="adminBroad" placeholder="Type notification" rows="4"></textarea><button onclick="sendBroadcast()" class="btn-orange">Broadcast - Send to All</button><div id="broadList"></div></div>
 
 <div class="card"><div class="tabs"><button onclick="showTab('members')" id="btn-members" class="tab active">Members</button><button onclick="showTab('loan')" id="btn-loan" class="tab">Loans</button><button onclick="showTab('add')" id="btn-add" class="tab">Add Savings</button><button onclick="showTab('feedback')" id="btn-feedback" class="tab">Feedback</button></div>
-<div id="tab-members"><h3>Members</h3><div class="card" style="border:3px solid #059669;background:#f0fdf4;padding:12px"><input id="newMemberName" placeholder="New member name"><input id="newMemberPhone" placeholder="Phone"><input id="newMemberSavings" type="number" placeholder="Savings amount"><button onclick="addMember()" class="btn-green">Add Member - Live</button></div>
-<select id="easyMem"></select><input id="easyAmt" type="number" placeholder="Amount to reduce"><div style="display:flex;gap:6px;margin:6px 0"><button onclick="setAmt(5000)" class="btn-gray" style="flex:1">-5k</button><button onclick="setAmt(10000)" class="btn-gray" style="flex:1">-10k</button><button onclick="setAmt(20000)" class="btn-gray" style="flex:1">-20k</button><button onclick="setAmt(50000)" class="btn-gray" style="flex:1">-50k</button></div><div id="easyPrev" style="background:#fff;padding:10px;border-radius:8px;border:2px solid #ef4444;font-size:12px">Select member</div><button onclick="reduce()" class="btn-red">Reduce - Live</button><input id="filterMem" placeholder="Search members" oninput="renderMembers()" style="margin-top:12px"><div id="membersList"></div></div>
-<div id="tab-loan" class="hide"><h3>Loans - 10% Interest + 5000 Fee - Loans Admin Full Control</h3><select id="loanMem" onchange="previewLoanAdmin()"><option value="">Select member</option></select><div id="loanMemInfo" style="background:#fff;padding:10px;border-radius:8px;border:2px solid #059669;font-size:12px">Select member</div><input id="loanAmtAdmin" type="number" placeholder="Loan amount" oninput="previewLoanAdmin()"><input id="loanDateAdmin" type="date" oninput="previewLoanAdmin()"><div class="fee-box"><b>Fixed Formula:</b> Total = Loan + 10% Interest + 5000 Processing Fee</div><div class="sig-wrap"><p style="font-weight:800">Signature</p><canvas id="sigCanvasAdmin" width="700" height="200"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn-red" style="flex:1" onclick="clearSigAdmin()">Clear</button><button type="button" class="btn-green" style="flex:1" onclick="saveSigAdmin()">Save</button></div></div><div id="loanPreviewAdmin" style="background:#fff;padding:12px;border-radius:10px;border:2px solid #1e40af;font-size:12px">Select member</div><button onclick="createLoan()" style="background:#1e40af;color:#fff">Create Loan - 10% + 5000 - Live</button><h3>Pending Approval</h3><div id="pendingLoans"></div><h3>All Loans</h3><div id="allLoans"></div><div style="background:#0f172a;color:#fff;padding:12px;border-radius:10px;margin-top:12px;text-align:center"><div>Total Outstanding (with 10% + 5000):</div><div id="totalLoans" style="font-size:28px;color:#fde047;font-weight:900">0</div></div><h3>Repay Loan - Track Repayment</h3><select id="repayMem" onchange="previewRepay()"><option value="">Select member</option></select><input id="repayAmt" type="number" placeholder="Repayment amount" oninput="previewRepay()"><div id="repayPrev" style="background:#fff;padding:10px;border-radius:10px;border:2px solid #059669;font-size:12px">Select member</div><button onclick="doRepay()" class="btn-green">Record Repayment - Live</button></div>
-<div id="tab-add" class="hide"><h3>Add Savings</h3><select id="addMem" onchange="previewAdd()"><option value="">Select member</option></select><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:6px"><input id="w1" type="number" placeholder="W1" oninput="previewAdd()"><input id="w2" type="number" placeholder="W2" oninput="previewAdd()"><input id="w3" type="number" placeholder="W3" oninput="previewAdd()"><input id="w4" type="number" placeholder="W4" oninput="previewAdd()"></div><div style="background:#f8fafc;padding:10px;border-radius:8px;border:2px solid #000;font-size:12px;margin:8px 0"><div>Total: <b id="addTotal">0</b></div><div>Current: <b id="addCur">0</b></div><div>New: <b id="addNew">0</b></div></div><button onclick="addSaving()" style="background:#1e40af">Add Saving - Live</button></div>
+<!-- SAVINGS ADMIN ONLY: ADD MEMBER / REDUCE - HIDDEN FOR LOANS ADMIN -->
+<div id="tab-members"><h3>Members</h3>
+<div id="savingsOnlyBox1" class="card" style="border:3px solid #059669;background:#f0fdf4;padding:12px"><b style="color:#059669">Savings Admin Only - Add Member</b><input id="newMemberName" placeholder="New member name"><input id="newMemberPhone" placeholder="Phone"><input id="newMemberSavings" type="number" placeholder="Savings amount"><button onclick="addMember()" class="btn-green">Add Member - Savings Admin Only</button></div>
+<div id="savingsOnlyBox2"><select id="easyMem"></select><input id="easyAmt" type="number" placeholder="Amount to reduce"><div style="display:flex;gap:6px;margin:6px 0"><button onclick="setAmt(5000)" class="btn-gray" style="flex:1">-5k</button><button onclick="setAmt(10000)" class="btn-gray" style="flex:1">-10k</button><button onclick="setAmt(20000)" class="btn-gray" style="flex:1">-20k</button><button onclick="setAmt(50000)" class="btn-gray" style="flex:1">-50k</button></div><div id="easyPrev" style="background:#fff;padding:10px;border-radius:8px;border:2px solid #ef4444;font-size:12px">Select member</div><button onclick="reduce()" class="btn-red">Reduce - Savings Admin Only</button></div>
+<p id="loansNoAccessMsg" class="hide" style="color:#ef4444;font-weight:800">⛔ Loans Admin cannot add member or reduce savings. Only Savings Admin can do this.</p>
+<input id="filterMem" placeholder="Search members" oninput="renderMembers()" style="margin-top:12px"><div id="membersList"></div></div>
+<div id="tab-loan" class="hide"><h3>Loans - 10% + 5000 - Loans Admin Full Control</h3><select id="loanMem" onchange="previewLoanAdmin()"><option value="">Select member</option></select><div id="loanMemInfo" style="background:#fff;padding:10px;border-radius:8px;border:2px solid #059669;font-size:12px">Select member</div><input id="loanAmtAdmin" type="number" placeholder="Loan amount" oninput="previewLoanAdmin()"><input id="loanDateAdmin" type="date" oninput="previewLoanAdmin()"><label style="font-size:12px;font-weight:800">Repayment Period</label><select id="loanPeriodAdmin" onchange="calcDueDateAdmin();previewLoanAdmin()"><option value="">-- Select Period --</option><option value="7">1 Week - 7 Days</option><option value="14">2 Weeks - 14 Days</option><option value="30">1 Month - 30 Days</option><option value="60">2 Months - 60 Days</option><option value="90">3 Months - 90 Days</option></select><label style="font-size:12px;font-weight:800">Due Date</label><input id="loanDueDateAdmin" type="date" readonly style="background:#fef9c3"><div class="fee-box"><b>Fixed:</b> Total = Loan + 10% + 5000 Fee</div><div class="sig-wrap"><p style="font-weight:800">Signature</p><canvas id="sigCanvasAdmin" width="700" height="200"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn-red" style="flex:1" onclick="clearSigAdmin()">Clear</button><button type="button" class="btn-green" style="flex:1" onclick="saveSigAdmin()">Save</button></div></div><div id="loanPreviewAdmin" style="background:#fff;padding:12px;border-radius:10px;border:2px solid #1e40af;font-size:12px">Select member</div><button onclick="createLoan()" style="background:#1e40af;color:#fff">Create Loan - 10% + 5000 - Live</button><h3>Pending Approval - Loans Admin Only</h3><div id="pendingLoans"></div><h3>All Loans</h3><div id="allLoans"></div><div style="background:#0f172a;color:#fff;padding:12px;border-radius:10px;margin-top:12px;text-align:center"><div>Total Outstanding:</div><div id="totalLoans" style="font-size:28px;color:#fde047;font-weight:900">0</div></div><h3>Repay Loan - Loans Admin Only</h3><select id="repayMem" onchange="previewRepay()"><option value="">Select member</option></select><input id="repayAmt" type="number" placeholder="Repayment amount" oninput="previewRepay()"><div id="repayPrev" style="background:#fff;padding:10px;border-radius:10px;border:2px solid #059669;font-size:12px">Select member</div><button onclick="doRepay()" class="btn-green">Record Repayment - Loans Admin Only</button></div>
+<div id="tab-add" class="hide"><h3>Add Savings - Savings Admin Only</h3><div id="savingsOnlyBox3"><select id="addMem" onchange="previewAdd()"><option value="">Select member</option></select><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:6px"><input id="w1" type="number" placeholder="W1" oninput="previewAdd()"><input id="w2" type="number" placeholder="W2" oninput="previewAdd()"><input id="w3" type="number" placeholder="W3" oninput="previewAdd()"><input id="w4" type="number" placeholder="W4" oninput="previewAdd()"></div><div style="background:#f8fafc;padding:10px;border-radius:8px;border:2px solid #000;font-size:12px;margin:8px 0"><div>Total: <b id="addTotal">0</b></div><div>Current: <b id="addCur">0</b></div><div>New: <b id="addNew">0</b></div></div><button onclick="addSaving()" style="background:#1e40af">Add Saving - Savings Admin Only</button></div><p id="loansNoAccessMsg2" class="hide" style="color:#ef4444;font-weight:800">⛔ Loans Admin cannot add savings. Only Savings Admin can.</p></div>
 <div id="tab-feedback" class="hide"><div class="card feedback-box"><h3 style="color:#7c3aed;margin-top:0">Feedback</h3><div id="fbAll"></div><button onclick="clearFB()" class="btn-red" style="width:auto;padding:8px 14px;font-size:12px;margin-top:10px">Clear All Feedback</button></div></div>
 </div></div>
 
@@ -104,10 +124,10 @@ table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid 
 <input id="adminPass" type="password" placeholder="••••••••" style="background:#fff;color:#000">
 <button onclick="adminLogin()" class="btn-yellow">Admin Sign In</button>
 <div id="adminMsg" style="margin-top:10px"></div>
-<p style="font-size:11px;color:#94a3b8;text-align:center;margin-top:10px">Passwords are private. Members cannot see them.</p>
+<p style="font-size:11px;color:#94a3b8;text-align:center">Passwords are private. Members cannot see them.</p>
 </div><button onclick="backPublic()" style="background:#e2e8f0;color:#000;width:auto;padding:12px 24px;border-radius:10px;margin-top:12px">Back</button></div></div>
 </div>
-<div style="text-align:center;padding:16px;font-size:11px;color:#888"><span style="background:#22c55e;color:#000;padding:4px 10px;border-radius:12px;font-weight:800">🔥 LIVE - lunyo-savings.vercel.app - 10% + 5000</span></div>
+<div style="text-align:center;padding:16px;font-size:11px;color:#888"><span style="background:#22c55e;color:#000;padding:4px 10px;border-radius:12px;font-weight:800">🔥 LIVE - lunyo-savings.vercel.app - 10% + 5000 + OVERDUE AUTO</span></div>
 
 <script>
 const firebaseConfig = { apiKey: "PASTE_YOUR_API_KEY", authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com", databaseURL: "https://PASTE_YOUR_PROJECT-default-rtdb.firebaseio.com", projectId: "PASTE_YOUR_PROJECT", storageBucket: "PASTE_YOUR_PROJECT.appspot.com", messagingSenderId: "PASTE_SENDER_ID", appId: "PASTE_APP_ID" };
@@ -118,25 +138,26 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Number(n||0).toLocaleString()}
 function installApp(){if(deferredPrompt){deferredPrompt.prompt()}else{alert("Chrome Menu -> Install App")}}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e});
-// ===== LOAN FORMULA: 10% INTEREST + FIXED 5000 PROCESSING FEE =====
-const INTEREST = 0.10;
-const PROCESSING_FEE = 5000;
-function calcInterest(amount){ return Math.round(amount * INTEREST); }
-function calcTotal(amount){ return Math.round(amount + calcInterest(amount) + PROCESSING_FEE); }
-function loanBreakdown(amount){ return "Loan "+fmt(amount)+" + Interest 10% "+fmt(calcInterest(amount))+" + Fee "+fmt(PROCESSING_FEE)+" = Total "+fmt(calcTotal(amount)); }
+const INTEREST = 0.10; const PROCESSING_FEE = 5000;
+function calcInterest(a){ return Math.round(a * INTEREST); }
+function calcTotal(a){ return Math.round(a + calcInterest(a) + PROCESSING_FEE); }
+function isOverdue(loan){ if(!loan.dueDate) return false; if(loan.status==='paid' || loan.status==='rejected') return false; var today=new Date().toISOString().slice(0,10); return loan.dueDate < today && Number(loan.balance||0) > 0; }
+function addDays(dateStr, days){ var d=new Date(dateStr); d.setDate(d.getDate()+Number(days)); return d.toISOString().slice(0,10); }
+function calcDueDate(){ var start=$("loanDate").value || new Date().toISOString().slice(0,10); var period=$("loanPeriod").value; if(period) $("loanDueDate").value=addDays(start, period); }
+function calcDueDateAdmin(){ var start=$("loanDateAdmin").value || new Date().toISOString().slice(0,10); var period=$("loanPeriodAdmin").value; if(period) $("loanDueDateAdmin").value=addDays(start, period); }
 var initialData=[{"n":"Oyuru Benard","p":"785107607","t":370000},{"n":"Opio Clvin","p":"773143405","t":230000},{"n":"Choda Charlse","p":"775693534","t":25000},{"n":"Ocen moses","p":"789887596","t":465000},{"n":"Oyuku Dickens","p":"775420262","t":95000},{"n":"Adokorach Stella","p":"740931151","t":0},{"n":"Dhone Lwarence","p":"774106952","t":1200000},{"n":"Lrua Sidonia","p":"785772021","t":310000},{"n":"Opio Tonny Okwor","p":"783302588","t":0},{"n":"Dembe Ben","p":"763282058","t":190000},{"n":"Okema Bosco","p":"778886622","t":204000},{"n":"Omara Bashir","p":"772359907","t":149500},{"n":"Ojota Haron","p":"760883037","t":205000},{"n":"Mama Aisha","p":"788605576","t":130000},{"n":"Okello Hillary","p":"757240422","t":175000},{"n":"Opudu Walter","p":"778622828","t":128000},{"n":"Okello Issac Bet","p":"771368808","t":205000},{"n":"Okello Ambrose","p":"783014095","t":85000},{"n":"Okello Jonathan","p":"774987163","t":50000},{"n":"Elwelo Sam","p":"777248151","t":107000},{"n":"Tenga James","p":"771406067","t":255000},{"n":"Okeng Tom","p":"776871097","t":820000},{"n":"Otwal Santos","p":"771821770","t":30000},{"n":"Elwelo Ronald","p":"768605926","t":15000},{"n":"Kyompire Adrine","p":"782164034","t":0},{"n":"Okwir Emmanuel","p":"740818605","t":35000},{"n":"Eseru Simon","p":"774711693","t":70000},{"n":"Lea Ogwal","p":"","t":145000},{"n":"Ruth","p":"789088126","t":320000},{"n":"Odongo Leon","p":"785800210","t":30000},{"n":"Okello Robin","p":"","t":50000},{"n":"Olweny Moses","p":"746248356","t":0},{"n":"Ateng Evalene","p":"","t":20000},{"n":"Elet Erick","p":"782120035","t":530000},{"n":"Abura Solomon","p":"766229386","t":3575000},{"n":"Winny Anyango","p":"774632098","t":355000},{"n":"Okello Ambrose Denis","p":"772596832","t":0},{"n":"Lukuda John Paul","p":"746162257","t":80000},{"n":"Ongu Keneth","p":"7745292996","t":45000},{"n":"Okello willy","p":"","t":80000},{"n":"Omara bonny","p":"","t":150000},{"n":"Okunya Erick","p":"","t":0},{"n":"Omara Calvin","p":"","t":270000}];
 var live = { members: JSON.parse(JSON.stringify(initialData)), loans: [], feedback: [], broadcasts: [], checks: [], memberNotifs: [], secretLoans: [], privateReminders: [] };
 function saveLive(key, value){ if(USE_FIREBASE && DB){ DB.ref('watek/'+key).set(value); } else { try{ localStorage.setItem('watek_live_'+key, JSON.stringify(value)); }catch(e){} } }
 function loadLocalFallback(){ try{ var m=localStorage.getItem('watek_live_members'); if(m) live.members=JSON.parse(m); var l=localStorage.getItem('watek_live_loans'); if(l) live.loans=JSON.parse(l); var s=localStorage.getItem('watek_live_secretLoans'); if(s) live.secretLoans=JSON.parse(s); var p=localStorage.getItem('watek_live_privateReminders'); if(p) live.privateReminders=JSON.parse(p); }catch(e){} }
 function startLiveListeners(){
-  if(!USE_FIREBASE || !DB){ $("connText").innerText="Offline - Paste Firebase Config"; loadLocalFallback(); refreshAll(); return; }
+  if(!USE_FIREBASE || !DB){ $("connText").innerText="Offline - Paste Firebase Config"; loadLocalFallback(); refreshAll(); checkOverdueAuto(); return; }
   $("connText").innerText="LIVE - Connected";
   ['members','loans','feedback','broadcasts','checks','memberNotifs','secretLoans','privateReminders'].forEach(function(key){
-    DB.ref('watek/'+key).on('value', function(snap){ var v=snap.val(); if(v===null||v===undefined){ if(key==='members') DB.ref('watek/members').set(live.members); return; } if(Array.isArray(v)) live[key]=v; else if(typeof v==='object') live[key]=Object.values(v); else live[key]=v; refreshAll(); if(currentMember) refreshMemberView(); });
+    DB.ref('watek/'+key).on('value', function(snap){ var v=snap.val(); if(v===null||v===undefined){ if(key==='members') DB.ref('watek/members').set(live.members); return; } if(Array.isArray(v)) live[key]=v; else if(typeof v==='object') live[key]=Object.values(v); else live[key]=v; refreshAll(); checkOverdueAuto(); if(currentMember) refreshMemberView(); });
   });
   DB.ref('.info/connected').on('value', function(s){ $("connText").innerText = s.val() ? "LIVE - Connected" : "Reconnecting..."; });
 }
-function forceSync(){ refreshAll(); alert(USE_FIREBASE?"Live Sync ON":"Offline - Paste Firebase Config"); }
+function forceSync(){ refreshAll(); checkOverdueAuto(); alert(USE_FIREBASE?"Live Sync ON":"Offline - Paste Firebase Config"); }
 function saveMembers(m){ live.members=m; saveLive('members', m); refreshAll(); }
 function saveLoans(l){ live.loans=l; saveLive('loans', l); refreshAll(); }
 function saveFeedback(f){ live.feedback=f; saveLive('feedback', f); }
@@ -145,24 +166,115 @@ function saveChecks(c){ live.checks=c; saveLive('checks', c); }
 function saveSecretLoans(s){ live.secretLoans=s; saveLive('secretLoans', s); }
 function savePrivateReminders(p){ live.privateReminders=p; saveLive('privateReminders', p); }
 function updateGrand(){ var total=live.members.reduce(function(a,b){return a+Number(b.t||0)},0); var loanTotal=live.loans.filter(function(l){return l.status!=='paid' && l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.balance||0)},0); if($("adminGrand")) $("adminGrand").innerText="GRAND TOTAL IS "+fmt(total); if($("totalLoans")) $("totalLoans").innerText=fmt(loanTotal); return total; }
-function refreshAll(){ updateGrand(); renderMembers(); renderLoans(); renderMyLoans(); renderFeedback(); renderAdminNotifs(); renderMyAdminNotifs(); renderChecks(); renderSecretLoans(); renderLoanTracking(); if(currentMember) refreshMemberView(); }
+function refreshAll(){ updateGrand(); renderMembers(); renderLoans(); renderMyLoans(); renderFeedback(); renderAdminNotifs(); renderMyAdminNotifs(); renderChecks(); renderSecretLoans(); renderLoanTracking(); renderLunyoInterest(); if(currentMember) refreshMemberView(); }
 function searchName(){ var q=$("memberName").value.trim().toLowerCase(); var box=$("suggestBox"); if(q.length<2){box.classList.add("hide");return} var matches=live.members.filter(function(m){return m.n.toLowerCase().includes(q)}).slice(0,10); if(!matches.length){box.classList.add("hide");return} box.innerHTML=matches.map(function(m){return '<div onclick="pickName(\''+m.n.replace(/'/g,"\\'")+'\')">'+m.n+'</div>'}).join(""); box.classList.remove("hide"); }
 function pickName(n){ $("memberName").value=n; $("suggestBox").classList.add("hide"); }
 function showAll(){ var box=$("allList"); box.classList.toggle("hide"); box.innerHTML=live.members.map(function(m){return '<div class="row"><b>'+m.n+'</b><button onclick="pickName(\''+m.n.replace(/'/g,"\\'")+'\');document.getElementById(\'allList\').classList.add(\'hide\')" class="btn-blue" style="width:auto;padding:6px 12px">Open</button></div>'}).join(""); }
-function memberLogin(){ var name=$("memberName").value.trim(); if(!name){alert("Type your name");return} var m=live.members.find(function(x){return x.n.toLowerCase()===name.toLowerCase()}); if(!m){ if(confirm("Name not found. Create as new member?")){ m={n:name,p:$("memberPhone").value||"",t:0}; live.members.push(m); saveMembers(live.members); } else return; } currentMember=m; var chk={name:m.n, date:new Date().toISOString().slice(0,10), time:new Date().toLocaleTimeString()}; live.checks.unshift(chk); saveChecks(live.checks.slice(0,100)); $("publicPage").classList.add("hide"); $("memberPage").classList.remove("hide"); $("secretAdmin").classList.add("hide"); $("adminPage").classList.add("hide"); $("mNameShow").innerText=m.n; refreshMemberView(); }
+function memberLogin(){ var name=$("memberName").value.trim(); if(!name){alert("Type your name");return} var m=live.members.find(function(x){return x.n.toLowerCase()===name.toLowerCase()}); if(!m){ if(confirm("Name not found. Create as new member?")){ m={n:name,p:$("memberPhone").value||"",t:0}; live.members.push(m); saveMembers(live.members); } else return; } currentMember=m; var chk={name:m.n, date:new Date().toISOString().slice(0,10), time:new Date().toLocaleTimeString()}; live.checks.unshift(chk); saveChecks(live.checks.slice(0,100)); $("publicPage").classList.add("hide"); $("memberPage").classList.remove("hide"); $("secretAdmin").classList.add("hide"); $("adminPage").classList.add("hide"); $("mNameShow").innerText=m.n; checkOverdueAuto(); refreshMemberView(); }
 function refreshMemberView(){ if(!currentMember) return; var fresh=live.members.find(function(x){return x.n===currentMember.n}); if(fresh) currentMember=fresh; $("mySavings").innerText=fmt(currentMember.t||0); $("myMax").innerText=fmt(Math.floor((currentMember.t||0)*0.8)); $("savingsRecordDetails").innerHTML='<table><tr><th>Date</th><th>Type</th><th>Amount</th></tr><tr><td>Current</td><td>Total Savings</td><td>'+fmt(currentMember.t)+'</td></tr></table>'; renderMyLoans(); renderPrivateRemindersForMember(); }
 function logoutMember(){ currentMember=null; $("memberPage").classList.add("hide"); $("publicPage").classList.remove("hide"); }
 function toggleSavingsRecord(){ $("savingsRecordBox").classList.toggle("hide"); }
 function toggleLoan(){ $("loanForm").classList.toggle("hide"); }
-function previewLoan(){ var amt=Number($("loanAmt").value||0); $("loanPreview").innerHTML="Loan: "+fmt(amt)+" | Interest 10%: "+fmt(calcInterest(amt))+" | Processing Fee: "+fmt(PROCESSING_FEE)+" | <b>Total to Repay: "+fmt(calcTotal(amt))+"</b> | Max: "+fmt(Math.floor((currentMember.t||0)*0.8)); }
-function applyLoan(){ var amt=Number($("loanAmt").value||0); if(!amt){alert("Enter amount");return} if(amt > Math.floor((currentMember.t||0)*0.8)){ alert("Exceeds 80% max"); return; } var total=calcTotal(amt); var loan={id:Date.now(), member:currentMember.n, amount:amt, interest:calcInterest(amt), fee:PROCESSING_FEE, totalRepay:total, balance:total, paid:0, date:$("loanDate").value||new Date().toISOString().slice(0,10), status:'pending', sig:sigData||''}; live.loans.push(loan); saveLoans(live.loans); var secret={id:loan.id, member:currentMember.n, amount:amt, interest:loan.interest, fee:PROCESSING_FEE, totalRepay:total, balance:total, date:loan.date, time:new Date().toLocaleTimeString(), status:'pending'}; live.secretLoans.unshift(secret); saveSecretLoans(live.secretLoans.slice(0,200)); $("loanMsg").innerHTML="<b style='color:green'>✅ Submitted - "+loanBreakdown(amt)+" - Admin will approve</b>"; renderMyLoans(); renderSecretLoans(); }
-function renderMyLoans(){ if(!currentMember) return; var mine=live.loans.filter(function(l){return l.member===currentMember.n}); $("myLoansList").innerHTML = mine.length ? mine.map(function(l){return '<div class="row"><span>'+l.date+' - Loan '+fmt(l.amount)+' + 10% '+fmt(l.interest)+' + Fee '+fmt(l.fee||5000)+' = '+fmt(l.totalRepay)+' - '+l.status+'</span><b>Balance: '+fmt(l.balance)+' | Paid: '+fmt(l.paid||0)+'</b></div>'}).join("") : "No loans yet"; $("pendingLoans").innerHTML = live.loans.filter(function(l){return l.status==='pending'}).map(function(l){return '<div class="row"><span>'+l.member+' - '+fmt(l.amount)+' +10% +5000 = '+fmt(l.totalRepay)+' </span><div><button onclick="approveLoan('+l.id+')" class="btn-green" style="width:auto;padding:6px 12px">Approve</button> <button onclick="rejectLoan('+l.id+')" class="btn-red" style="width:auto;padding:6px 12px">Reject</button></div></div>'}).join("") || "No pending"; $("allLoans").innerHTML = live.loans.map(function(l){return '<div class="row"><span>'+l.member+' - '+fmt(l.amount)+' +10% +5000 = '+fmt(l.totalRepay)+' - '+l.status+'</span><b>Bal: '+fmt(l.balance)+' Paid: '+fmt(l.paid||0)+'</b></div>'}).join("") || "No loans"; }
-function approveLoan(id){ var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='approved'; saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.id==id}); if(s){s.status='approved'; saveSecretLoans(live.secretLoans);} var p={to:l.member, text:"✅ Your loan of "+fmt(l.amount)+" is APPROVED. Breakdown: Loan "+fmt(l.amount)+" + Interest 10% "+fmt(l.interest)+" + Processing Fee 5000 = Total to repay "+fmt(l.totalRepay)+". Please repay on time. - Loans Admin", date:new Date().toLocaleString()}; live.privateReminders.unshift(p); savePrivateReminders(live.privateReminders); alert("Approved - Member gets private notification ✅"); } }
-function rejectLoan(id){ var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='rejected'; saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.id==id}); if(s){s.status='rejected'; saveSecretLoans(live.secretLoans);} } }
-function sendPrivateReminder(){ var to=$("remindMem").value; var txt=$("remindText").value.trim(); if(!to){alert("Select member who took loan");return} if(!txt){alert("Type reminder message");return} var p={to:to, text:txt, date:new Date().toLocaleString(), from:currentAdminName||'Loans Admin'}; live.privateReminders.unshift(p); savePrivateReminders(live.privateReminders); $("remindText").value=""; $("remindMsg").innerHTML="<b style='color:green'>✅ Private reminder sent to "+to+" ONLY.</b>"; }
-function renderPrivateRemindersForMember(){ if(!currentMember) return; var mine=live.privateReminders.filter(function(p){return p.to===currentMember.n}); $("myTransNotifs").innerHTML = mine.length ? mine.map(function(p){return '<div class="private-box"><b>From Loans Admin:</b><br>'+p.text+'<br><small>'+p.date+'</small></div>'}).join("") : "No private reminders. If you took a loan, Loans Admin will remind you here privately."; }
-function renderLoanTracking(){ var active=live.loans.filter(function(l){return l.status==='approved' || l.status==='pending'}); var lent=live.loans.reduce(function(a,b){return a+Number(b.totalRepay||0)},0); var repaid=live.loans.reduce(function(a,b){return a+Number(b.paid||0)},0); var owing=live.loans.filter(function(l){return l.status!=='paid' && l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.balance||0)},0); if($("loanTotalLent")) $("loanTotalLent").innerText=fmt(lent); if($("loanTotalRepaid")) $("loanTotalRepaid").innerText=fmt(repaid); if($("loanTotalOwing")) $("loanTotalOwing").innerText=fmt(owing); if($("loanTrackList")) $("loanTrackList").innerHTML = active.length ? active.map(function(l){return '<div class="row"><span><b>'+l.member+'</b> - Loan '+fmt(l.amount)+' +10% '+fmt(l.interest)+' +5000 = '+fmt(l.totalRepay)+' - '+l.status+'</span><span>Paid: '+fmt(l.paid||0)+' | <b style="color:red">Owing: '+fmt(l.balance)+'</b></span><button onclick="quickRemind(\''+l.member.replace(/'/g,"\\'")+'\')" class="btn-blue" style="width:auto;padding:6px 10px;font-size:11px">Remind</button></div>'}).join("") : "No active loans - All cleared ✅"; var opts='<option value="">Select member who took loan</option>'+live.members.filter(function(m){return live.loans.some(function(l){return l.member===m.n && l.status!=='paid' && l.status!=='rejected'})}).map(function(m){return '<option>'+m.n+'</option>'}).join(""); if($("remindMem")) $("remindMem").innerHTML=opts; }
-function quickRemind(name){ $("remindMem").value=name; $("remindText").value="Hello "+name+", friendly reminder: Your loan balance is still owing. Please repay soon. Thank you. - Loans Admin"; window.scrollTo(0,0); alert("Reminder ready for "+name); }
+function previewLoan(){ var amt=Number($("loanAmt").value||0); var due=$("loanDueDate").value||""; $("loanPreview").innerHTML="Loan: "+fmt(amt)+" | Interest 10%: "+fmt(calcInterest(amt))+" | Fee: 5000 | <b>Total: "+fmt(calcTotal(amt))+"</b><br>Due Date: <b>"+(due||"Select Period")+"</b> | Max: "+fmt(Math.floor((currentMember.t||0)*0.8)); }
+function applyLoan(){
+  var amt=Number($("loanAmt").value||0); if(!amt){alert("Enter amount");return}
+  if(amt > Math.floor((currentMember.t||0)*0.8)){ alert("Exceeds 80% max"); return; }
+  var period=$("loanPeriod").value; var due=$("loanDueDate").value;
+  if(!period || !due){ alert("Please select Repayment Period - Required"); return; }
+  var total=calcTotal(amt);
+  var loan={id:Date.now(), member:currentMember.n, amount:amt, interest:calcInterest(amt), fee:5000, totalRepay:total, balance:total, paid:0, date:$("loanDate").value||new Date().toISOString().slice(0,10), periodDays:Number(period), dueDate:due, status:'pending', sig:sigData||'', overdueNotified:false};
+  live.loans.push(loan); saveLoans(live.loans);
+  var secret={id:loan.id, member:currentMember.n, amount:amt, interest:loan.interest, fee:5000, totalRepay:total, balance:total, paid:0, date:loan.date, dueDate:due, periodDays:Number(period), time:new Date().toLocaleTimeString(), status:'pending'};
+  live.secretLoans.unshift(secret); saveSecretLoans(live.secretLoans.slice(0,200));
+  $("loanMsg").innerHTML="<b style='color:green'>✅ Submitted - Loan "+fmt(amt)+" +10% +5000 = "+fmt(total)+" - Due: "+due+"</b>"; renderMyLoans(); renderSecretLoans();
+}
+// ===== OVERDUE AUTOMATIC - PRIVATE TO THAT MEMBER ONLY =====
+function checkOverdueAuto(){
+  var changed=false;
+  live.loans.forEach(function(l){
+    if(isOverdue(l) && !l.overdueNotified){
+      l.overdueNotified=true; l.status = l.status==='pending' ? 'pending' : 'overdue'; changed=true;
+      // AUTOMATIC PRIVATE NOTIFICATION - ONLY THAT MEMBER SEES
+      var msg="⚠️ OVERDUE ALERT - Private: Hello "+l.member+", your loan of "+fmt(l.amount)+" (Total to repay "+fmt(l.totalRepay)+" with 10% + 5000 fee) was due on "+l.dueDate+" and is now OVERDUE. Balance remaining: "+fmt(l.balance)+". Please repay immediately to avoid problems. - Loans Admin (Automatic)";
+      var exists = live.privateReminders.some(function(p){ return p.to===l.member && p.loanId===l.id && p.type==='overdue_auto'; });
+      if(!exists){ live.privateReminders.unshift({to:l.member, loanId:l.id, type:'overdue_auto', text:msg, date:new Date().toLocaleString()}); }
+    }
+    if(!isOverdue(l) && l.status==='overdue'){ l.status='approved'; changed=true; }
+  });
+  if(changed){ saveLoans(live.loans); savePrivateReminders(live.privateReminders); }
+  // Re-check every 30 seconds for new overdue
+  // Also update secret loans overdue flag
+  live.secretLoans.forEach(function(s){ var orig=live.loans.find(function(x){return x.id===s.id}); if(orig){ s.balance=orig.balance; s.status=orig.status; s.paid=orig.paid||0; } });
+}
+setInterval(checkOverdueAuto, 30000);
+function renderMyLoans(){
+  if(!currentMember) return;
+  var mine=live.loans.filter(function(l){return l.member===currentMember.n});
+  $("myLoansList").innerHTML = mine.length ? mine.map(function(l){
+    var od=isOverdue(l);
+    return '<div class="'+(od?'overdue-box':'row')+'"><span>'+l.date+' - Loan '+fmt(l.amount)+' +10% '+fmt(l.interest)+' +5000 = '+fmt(l.totalRepay)+' - '+l.status.toUpperCase()+'<br>Period: '+ (l.periodDays||'') +' days | Due: '+(l.dueDate||'')+' '+(od?'<span class="badge-overdue">⚠️ OVERDUE</span>':'<span class="badge-ok">On Time</span>')+'</span><b>Balance: '+fmt(l.balance)+' | Paid: '+fmt(l.paid||0)+'</b></div>'
+  }).join("") : "No loans yet";
+  // Pending - Loans Admin only can approve
+  if(currentRole==='loans' || currentRole==='lunyo'){
+    $("pendingLoans").innerHTML = live.loans.filter(function(l){return l.status==='pending'}).map(function(l){return '<div class="row"><span>'+l.member+' - '+fmt(l.amount)+' +10% +5000 = '+fmt(l.totalRepay)+' | Due: '+(l.dueDate||'')+'</span><div><button onclick="approveLoan('+l.id+')" class="btn-green" style="width:auto;padding:6px 12px">Approve</button> <button onclick="rejectLoan('+l.id+')" class="btn-red" style="width:auto;padding:6px 12px">Reject</button></div></div>'}).join("") || "No pending";
+  } else {
+    $("pendingLoans").innerHTML = "<i>Only Loans Admin can approve/reject.</i>";
+  }
+  $("allLoans").innerHTML = live.loans.map(function(l){ var od=isOverdue(l); return '<div class="row"><span>'+l.member+' - '+fmt(l.amount)+' +10% +5000 = '+fmt(l.totalRepay)+' - '+l.status+' | Due: '+(l.dueDate||'')+' '+(od?'<span class="badge-overdue">OVERDUE</span>':'')+'</span><b>Bal: '+fmt(l.balance)+' Paid: '+fmt(l.paid||0)+'</b></div>'}).join("") || "No loans";
+}
+function approveLoan(id){
+  if(currentRole!=='loans' && currentRole!=='lunyo'){ alert("Only Loans Admin can approve"); return; }
+  var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='approved'; saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.id==id}); if(s){s.status='approved'; saveSecretLoans(live.secretLoans);} var p={to:l.member, type:'approve', text:"✅ Your loan of "+fmt(l.amount)+" is APPROVED. Total to repay: "+fmt(l.totalRepay)+" (Loan + 10% + 5000 Fee). Due Date: "+(l.dueDate||'')+". Please repay on time. - Loans Admin", date:new Date().toLocaleString()}; live.privateReminders.unshift(p); savePrivateReminders(live.privateReminders); alert("Approved ✅"); }
+}
+function rejectLoan(id){
+  if(currentRole!=='loans' && currentRole!=='lunyo'){ alert("Only Loans Admin can reject"); return; }
+  var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='rejected'; saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.id==id}); if(s){s.status='rejected'; saveSecretLoans(live.secretLoans);} }
+}
+// ===== ONLY LOANS ADMIN CAN SEND OVERDUE REMINDER =====
+function sendPrivateReminder(){
+  if(currentRole!=='loans' && currentRole!=='lunyo'){ alert("Only Loans Admin can send overdue reminder"); return; }
+  var to=$("remindMem").value; var txt=$("remindText").value.trim(); if(!to){alert("Select overdue member");return} if(!txt){alert("Type reminder");return}
+  var p={to:to, type:'manual_reminder', text:txt, date:new Date().toLocaleString(), from:currentAdminName||'Loans Admin'};
+  live.privateReminders.unshift(p); savePrivateReminders(live.privateReminders); $("remindText").value=""; $("remindMsg").innerHTML="<b style='color:green'>✅ Private overdue reminder sent to "+to+" ONLY. No one else sees it.</b>";
+}
+function renderPrivateRemindersForMember(){
+  if(!currentMember) return;
+  var mine=live.privateReminders.filter(function(p){return p.to===currentMember.n});
+  $("myTransNotifs").innerHTML = mine.length ? mine.map(function(p){ return '<div class="'+(p.type==='overdue_auto'?'overdue-box':'private-box')+'"><b>'+(p.type==='overdue_auto'?'⚠️ AUTOMATIC OVERDUE ALERT':'From Loans Admin:')+'</b><br>'+p.text+'<br><small>'+p.date+'</small></div>' }).join("") : "No private reminders. If your loan becomes overdue, you will get automatic private alert here.";
+}
+function renderLoanTracking(){
+  var active=live.loans.filter(function(l){return l.status==='approved' || l.status==='pending' || l.status==='overdue'});
+  var lent=live.loans.reduce(function(a,b){return a+Number(b.totalRepay||0)},0);
+  var repaid=live.loans.reduce(function(a,b){return a+Number(b.paid||0)},0);
+  var owing=live.loans.filter(function(l){return l.status!=='paid' && l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.balance||0)},0);
+  if($("loanTotalLent")) $("loanTotalLent").innerText=fmt(lent);
+  if($("loanTotalRepaid")) $("loanTotalRepaid").innerText=fmt(repaid);
+  if($("loanTotalOwing")) $("loanTotalOwing").innerText=fmt(owing);
+  if($("loanTrackList")) $("loanTrackList").innerHTML = active.length ? active.map(function(l){ var od=isOverdue(l); return '<div class="'+(od?'overdue-box':'row')+'"><span><b>'+l.member+'</b> - Loan '+fmt(l.amount)+' +10% '+fmt(l.interest)+' +5000 = '+fmt(l.totalRepay)+' - '+l.status.toUpperCase()+'<br>Due: '+(l.dueDate||'')+' '+(od?'<span class="badge-overdue">OVERDUE</span>':'')+'</span><span>Paid: '+fmt(l.paid||0)+' | <b style="color:red">Owing: '+fmt(l.balance)+'</b></span>'+(currentRole==='loans'||currentRole==='lunyo'?'<button onclick="quickRemind(\''+l.member.replace(/'/g,"\\'")+'\')" class="btn-blue" style="width:auto;padding:6px 10px;font-size:11px">Remind</button>':'')+'</div>' }).join("") : "No active loans ✅";
+  // Reminder dropdown: only overdue members - Loans Admin only
+  var overdueMembers=live.members.filter(function(m){ return live.loans.some(function(l){ return l.member===m.n && isOverdue(l); }) });
+  var opts='<option value="">Select overdue member</option>'+overdueMembers.map(function(m){return '<option>'+m.n+'</option>'}).join("");
+  if($("remindMem")) $("remindMem").innerHTML=opts;
+  // If not Loans Admin, disable reminder
+  if(currentRole && currentRole!=='loans' && currentRole!=='lunyo'){
+    if($("remindText")) $("remindText").disabled=true;
+  } else { if($("remindText")) $("remindText").disabled=false; }
+}
+function quickRemind(name){ if(currentRole!=='loans' && currentRole!=='lunyo'){ alert("Only Loans Admin can send reminder"); return; } $("remindMem").value=name; var l=live.loans.find(function(x){return x.member===name && isOverdue(x)}); $("remindText").value="Hello "+name+", your loan is OVERDUE. Due date was "+(l?l.dueDate:'')+". Balance: "+(l?fmt(l.balance):'')+". Please repay immediately. - Loans Admin"; window.scrollTo(0,0); }
+// ===== LUNYO SECRET: INTEREST ACCUMULATIVE AUTOMATIC =====
+function renderLunyoInterest(){
+  if(currentRole!=='lunyo') return;
+  var totalInterest=live.loans.filter(function(l){return l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.interest||0)},0);
+  var paidInterest=live.loans.filter(function(l){return l.status==='paid'}).reduce(function(a,b){return a+Number(b.interest||0)},0);
+  var owingInterest=live.loans.filter(function(l){return l.status!=='paid' && l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.interest||0)},0);
+  var took=new Set(live.loans.filter(function(l){return l.status!=='rejected'}).map(function(l){return l.member}));
+  var repaid=new Set(live.loans.filter(function(l){return l.status==='paid'}).map(function(l){return l.member}));
+  if($("secretTotalInterest")) $("secretTotalInterest").innerText=fmt(totalInterest);
+  if($("secretPaidInterest")) $("secretPaidInterest").innerText=fmt(paidInterest);
+  if($("secretOwingInterest")) $("secretOwingInterest").innerText=fmt(owingInterest);
+  if($("secretTookCount")) $("secretTookCount").innerText=took.size+" members";
+  if($("secretRepaidCount")) $("secretRepaidCount").innerText=repaid.size+" members";
+}
 function goAdmin(){ $("publicPage").classList.add("hide"); $("secretAdmin").classList.remove("hide"); }
 function backPublic(){ $("secretAdmin").classList.add("hide"); $("publicPage").classList.remove("hide"); }
 function adminLogin(){
@@ -173,32 +285,67 @@ function adminLogin(){
     currentAdminName=name; currentRole=role;
     $("secretAdmin").classList.add("hide"); $("adminPage").classList.remove("hide");
     $("adminTitle").innerText="Admin Panel - "+name.toUpperCase()+" ("+role.toUpperCase()+") - LIVE";
-    $("adminInfo").innerText = role==='lunyo' ? "🔔 Lunyo: Secret Checks + Secret Storage" : role==='loans' ? "💰 Loans Admin: You fully run loans + Private Reminders + 10% + 5000 Fee" : "Savings Admin: You run savings";
+    $("adminInfo").innerText = role==='lunyo' ? "🔔 Lunyo: Secret Checks + Secret Interest + Who Took/Repaid" : role==='loans' ? "💰 Loans Admin: Approve/Reject + Repayment + Overdue Reminders Only" : "Savings Admin: Add Member / Reduce / Add Savings Only";
     if(role==='lunyo'){ $("lunyoCheckBox").classList.remove("hide"); $("lunyoSecretStorage").classList.remove("hide"); } else { $("lunyoCheckBox").classList.add("hide"); $("lunyoSecretStorage").classList.add("hide"); }
-    $("adminMsg").innerHTML=""; refreshAll(); renderAdminSelects(); renderLoanTracking(); alert("Welcome "+name+" ✅");
-  } else { $("adminMsg").innerHTML="<b style='color:red'>❌ Wrong password. Ask Lunyo for your private password. Passwords are secret.</b>"; }
+    // ROLE RESTRICTIONS
+    if(role==='loans'){
+      // Loans Admin CANNOT add member / reduce / add savings
+      $("savingsOnlyBox1").classList.add("hide"); $("savingsOnlyBox2").classList.add("hide"); $("savingsOnlyBox3").classList.add("hide");
+      $("loansNoAccessMsg").classList.remove("hide"); $("loansNoAccessMsg2").classList.remove("hide");
+      $("loansAdminBox").classList.remove("hide");
+    } else {
+      $("savingsOnlyBox1").classList.remove("hide"); $("savingsOnlyBox2").classList.remove("hide"); $("savingsOnlyBox3").classList.remove("hide");
+      $("loansNoAccessMsg").classList.add("hide"); $("loansNoAccessMsg2").classList.add("hide");
+      if(role==='savings'){ $("loansAdminBox").classList.add("hide"); } else { $("loansAdminBox").classList.remove("hide"); }
+    }
+    $("adminMsg").innerHTML=""; refreshAll(); renderAdminSelects(); renderLoanTracking(); renderLunyoInterest(); checkOverdueAuto(); alert("Welcome "+name+" ✅");
+  } else { $("adminMsg").innerHTML="<b style='color:red'>❌ Wrong password. Ask Lunyo for your private password.</b>"; }
 }
 function logoutAdmin(){ $("adminPage").classList.add("hide"); $("publicPage").classList.remove("hide"); currentRole=''; }
 function renderAdminSelects(){ var opts='<option value="">Select member</option>'+live.members.map(function(m){return '<option>'+m.n+'</option>'}).join(""); ["easyMem","loanMem","repayMem","addMem"].forEach(function(id){ if($(id)) $(id).innerHTML=opts; }); }
 function showTab(t){ ['members','loan','add','feedback'].forEach(function(x){ $("tab-"+x).classList.add("hide"); $("btn-"+x).classList.remove("active"); }); $("tab-"+t).classList.remove("hide"); $("btn-"+t).classList.add("active"); }
-function addMember(){ var n=$("newMemberName").value.trim(); if(!n){alert("Enter name");return} live.members.push({n:n, p:$("newMemberPhone").value||"", t:Number($("newMemberSavings").value||0)}); saveMembers(live.members); $("newMemberName").value=""; $("newMemberSavings").value=""; alert("Added - Live ✅"); renderAdminSelects(); }
+function addMember(){
+  if(currentRole==='loans'){ alert("⛔ Loans Admin cannot add member. Only Savings Admin can."); return; }
+  var n=$("newMemberName").value.trim(); if(!n){alert("Enter name");return} live.members.push({n:n, p:$("newMemberPhone").value||"", t:Number($("newMemberSavings").value||0)}); saveMembers(live.members); $("newMemberName").value=""; $("newMemberSavings").value=""; alert("Added - Live ✅"); renderAdminSelects();
+}
 function setAmt(v){ $("easyAmt").value=v; previewEasy(); }
 function previewEasy(){ var n=$("easyMem").value; var m=live.members.find(function(x){return x.n===n}); if(m) $("easyPrev").innerHTML="Member: "+m.n+" | Current: "+fmt(m.t)+" | Reduce: "+fmt($("easyAmt").value||0)+" | New: "+fmt(m.t-Number($("easyAmt").value||0)); }
-function reduce(){ var n=$("easyMem").value, amt=Number($("easyAmt").value||0); var m=live.members.find(function(x){return x.n===n}); if(!m){alert("Select member");return} m.t=Math.max(0,m.t-amt); saveMembers(live.members); alert("Reduced - Live ✅"); }
+function reduce(){
+  if(currentRole==='loans'){ alert("⛔ Loans Admin cannot reduce savings. Only Savings Admin can."); return; }
+  var n=$("easyMem").value, amt=Number($("easyAmt").value||0); var m=live.members.find(function(x){return x.n===n}); if(!m){alert("Select member");return} m.t=Math.max(0,m.t-amt); saveMembers(live.members); alert("Reduced - Live ✅");
+}
 function renderMembers(){ var q=($("filterMem").value||"").toLowerCase(); var list=live.members.filter(function(m){return m.n.toLowerCase().includes(q)}); $("membersList").innerHTML=list.map(function(m){return '<div class="row"><b>'+m.n+'</b><span>'+fmt(m.t)+'</span><span>'+m.p+'</span></div>'}).join(""); renderAdminSelects(); }
-function previewLoanAdmin(){ var n=$("loanMem").value; var m=live.members.find(function(x){return x.n===n}); if(!m){$("loanMemInfo").innerText="Select member";return} $("loanMemInfo").innerHTML="Savings: "+fmt(m.t)+" | Max 80%: "+fmt(Math.floor(m.t*0.8)); var amt=Number($("loanAmtAdmin").value||0); $("loanPreviewAdmin").innerHTML="Loan: "+fmt(amt)+" | Interest 10%: "+fmt(calcInterest(amt))+" | Processing Fee: "+fmt(PROCESSING_FEE)+" | <b>Total to Repay: "+fmt(calcTotal(amt))+"</b>"; }
-function createLoan(){ var n=$("loanMem").value, amt=Number($("loanAmtAdmin").value||0); if(!n||!amt){alert("Select member + amount");return} var total=calcTotal(amt); var loan={id:Date.now(), member:n, amount:amt, interest:calcInterest(amt), fee:PROCESSING_FEE, totalRepay:total, balance:total, paid:0, date:$("loanDateAdmin").value||new Date().toISOString().slice(0,10), status:'approved', sig:sigDataAdmin||''}; live.loans.push(loan); saveLoans(live.loans); var secret={id:loan.id, member:n, amount:amt, interest:loan.interest, fee:PROCESSING_FEE, totalRepay:total, balance:total, date:loan.date, time:new Date().toLocaleTimeString(), status:'approved'}; live.secretLoans.unshift(secret); saveSecretLoans(live.secretLoans.slice(0,200)); var p={to:n, text:"💰 New loan for you: Loan "+fmt(amt)+" + Interest 10% "+fmt(loan.interest)+" + Fee 5000 = Total "+fmt(total)+" to repay. - Loans Admin", date:new Date().toLocaleString()}; live.privateReminders.unshift(p); savePrivateReminders(live.privateReminders); alert("Loan Created - "+loanBreakdown(amt)+" - Member gets private notification ✅"); }
+function previewLoanAdmin(){ var n=$("loanMem").value; var m=live.members.find(function(x){return x.n===n}); if(!m){$("loanMemInfo").innerText="Select member";return} $("loanMemInfo").innerHTML="Savings: "+fmt(m.t)+" | Max 80%: "+fmt(Math.floor(m.t*0.8)); var amt=Number($("loanAmtAdmin").value||0); $("loanPreviewAdmin").innerHTML="Loan: "+fmt(amt)+" | Interest 10%: "+fmt(calcInterest(amt))+" | Fee: 5000 | <b>Total: "+fmt(calcTotal(amt))+"</b><br>Due: "+($("loanDueDateAdmin").value||"Select Period"); }
+function createLoan(){
+  if(currentRole==='savings'){ alert("⛔ Savings Admin cannot create loan. Only Loans Admin can."); return; }
+  var n=$("loanMem").value, amt=Number($("loanAmtAdmin").value||0); if(!n||!amt){alert("Select member + amount");return}
+  var period=$("loanPeriodAdmin").value; var due=$("loanDueDateAdmin").value; if(!period||!due){ alert("Select Repayment Period - Required"); return; }
+  var total=calcTotal(amt);
+  var loan={id:Date.now(), member:n, amount:amt, interest:calcInterest(amt), fee:5000, totalRepay:total, balance:total, paid:0, date:$("loanDateAdmin").value||new Date().toISOString().slice(0,10), periodDays:Number(period), dueDate:due, status:'approved', sig:sigDataAdmin||'', overdueNotified:false};
+  live.loans.push(loan); saveLoans(live.loans);
+  var secret={id:loan.id, member:n, amount:amt, interest:loan.interest, fee:5000, totalRepay:total, balance:total, paid:0, date:loan.date, dueDate:due, periodDays:Number(period), time:new Date().toLocaleTimeString(), status:'approved'};
+  live.secretLoans.unshift(secret); saveSecretLoans(live.secretLoans.slice(0,200));
+  var p={to:n, type:'new_loan', text:"💰 New loan for you: Loan "+fmt(amt)+" + 10% "+fmt(loan.interest)+" + Fee 5000 = Total "+fmt(total)+" to repay. Due Date: "+due+". - Loans Admin", date:new Date().toLocaleString()};
+  live.privateReminders.unshift(p); savePrivateReminders(live.privateReminders);
+  alert("Loan Created - Total "+fmt(total)+" - Due "+due+" ✅");
+}
 function previewRepay(){ var n=$("repayMem").value; var tot=live.loans.filter(function(l){return l.member===n && l.status!=='paid' && l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.balance||0)},0); $("repayPrev").innerHTML="Outstanding (with 10% + 5000): "+fmt(tot)+" | Repay: "+fmt($("repayAmt").value||0); }
-function doRepay(){ var n=$("repayMem").value, amt=Number($("repayAmt").value||0); var loans=live.loans.filter(function(l){return l.member===n && l.status!=='paid' && l.status!=='rejected'}); if(!loans.length){alert("No loan");return} var left=amt; loans.forEach(function(l){ if(left<=0) return; var pay=Math.min(left,l.balance); l.balance-=pay; l.paid=(l.paid||0)+pay; left-=pay; if(l.balance<=0) l.status='paid'; }); saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.member===n}); if(s){ s.balance=Math.max(0, (s.balance||0)-amt); if(s.balance<=0) s.status='paid'; saveSecretLoans(live.secretLoans); } alert("Repayment recorded - Balance updated - Live ✅"); }
+function doRepay(){
+  if(currentRole==='savings'){ alert("⛔ Savings Admin cannot record repayment. Only Loans Admin can."); return; }
+  var n=$("repayMem").value, amt=Number($("repayAmt").value||0); var loans=live.loans.filter(function(l){return l.member===n && l.status!=='paid' && l.status!=='rejected'}); if(!loans.length){alert("No loan");return} var left=amt; loans.forEach(function(l){ if(left<=0) return; var pay=Math.min(left,l.balance); l.balance-=pay; l.paid=(l.paid||0)+pay; left-=pay; if(l.balance<=0){ l.status='paid'; } }); saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.member===n}); if(s){ var totPaid=live.loans.filter(function(x){return x.member===n}).reduce(function(a,b){return a+Number(b.paid||0)},0); var totBal=live.loans.filter(function(x){return x.member===n}).reduce(function(a,b){return a+Number(b.balance||0)},0); s.balance=totBal; s.paid=totPaid; if(totBal<=0) s.status='paid'; saveSecretLoans(live.secretLoans); } renderLunyoInterest(); alert("Repayment recorded - Member sees instantly ✅ - Lunyo sees who repaid");
+}
 function previewAdd(){ var n=$("addMem").value; var m=live.members.find(function(x){return x.n===n}); var total=(Number($("w1").value||0)+Number($("w2").value||0)+Number($("w3").value||0)+Number($("w4").value||0)); $("addTotal").innerText=fmt(total); if(m){$("addCur").innerText=fmt(m.t); $("addNew").innerText=fmt(m.t+total);} }
-function addSaving(){ var n=$("addMem").value; var m=live.members.find(function(x){return x.n===n}); if(!m){alert("Select member");return} var total=(Number($("w1").value||0)+Number($("w2").value||0)+Number($("w3").value||0)+Number($("w4").value||0)); m.t+=total; saveMembers(live.members); ["w1","w2","w3","w4"].forEach(function(id){$(id).value=""}); alert("Savings Added - Live ✅"); }
+function addSaving(){
+  if(currentRole==='loans'){ alert("⛔ Loans Admin cannot add savings. Only Savings Admin can."); return; }
+  var n=$("addMem").value; var m=live.members.find(function(x){return x.n===n}); if(!m){alert("Select member");return} var total=(Number($("w1").value||0)+Number($("w2").value||0)+Number($("w3").value||0)+Number($("w4").value||0)); m.t+=total; saveMembers(live.members); ["w1","w2","w3","w4"].forEach(function(id){$(id).value=""}); alert("Savings Added - Live ✅");
+}
 function sendBroadcast(){ var t=$("adminBroad").value.trim(); if(!t) return; live.broadcasts.unshift({text:t, date:new Date().toLocaleString(), by:currentAdminName||'Admin'}); saveBroadcasts(live.broadcasts); $("adminBroad").value=""; alert("Broadcast sent ✅"); }
 function renderAdminNotifs(){ $("broadList").innerHTML=live.broadcasts.map(function(b){return '<div class="row"><span>'+b.text+'</span><small>'+b.date+'</small></div>'}).join(""); $("homeNotifs").innerHTML=$("broadList").innerHTML; }
 function renderMyAdminNotifs(){ $("myAdminNotifs").innerHTML=live.broadcasts.map(function(b){return '<div class="row"><span>'+b.text+'</span><small>'+b.date+'</small></div>'}).join(""); }
 function renderChecks(){ if(currentRole==='lunyo'){ $("balanceChecksList").innerHTML=live.checks.map(function(c){return '<div class="row"><b>'+c.name+'</b><span>'+c.date+' '+c.time+'</span></div>'}).join("") || "No checks yet"; } else { $("balanceChecksList").innerHTML="<i>Only Lunyo sees this.</i>"; } }
 function clearBalanceChecks(){ if(currentRole!=='lunyo'){alert("Only Lunyo");return} live.checks=[]; saveChecks([]); }
 function toggleSecretLoans(){ if(currentRole!=='lunyo'){alert("Only Lunyo");return} $("secretLoansBox").classList.toggle("hide"); renderSecretLoans(); }
-function renderSecretLoans(){ if(currentRole!=='lunyo') return; var box=$("secretLoansBox"); if(!box) return; if(!live.secretLoans.length){ box.innerHTML="No loan applications yet"; return; } box.innerHTML='<table><tr><th>Member</th><th>Loan</th><th>Interest 10%</th><th>Fee</th><th>Total</th><th>Balance</th><th>Status</th></tr>'+live.secretLoans.map(function(s){return '<tr><td>'+s.member+'</td><td>'+fmt(s.amount)+'</td><td>'+fmt(s.interest||calcInterest(s.amount))+'</td><td>'+fmt(s.fee||5000)+'</td><td>'+fmt(s.totalRepay||calcTotal(s.amount))+'</td><td>'+fmt(s.balance)+'</td><td>'+s.status+'</td></tr>'}).join("")+'</table>'; }
+function renderSecretLoans(){ if(currentRole!=='lunyo') return; var box=$("secretLoansBox"); if(!box) return; if(!live.secretLoans.length){ box.innerHTML="No loan applications yet"; return; } box.innerHTML='<table><tr><th>Member</th><th>Loan</th><th>Interest 10%</th><th>Fee</th><th>Total</th><th>Paid</th><th>Balance</th><th>Due</th><th>Status</th></tr>'+live.secretLoans.map(function(s){ var od=s.dueDate && s.dueDate < new Date().toISOString().slice(0,10) && Number(s.balance||0)>0; return '<tr><td>'+s.member+'</td><td>'+fmt(s.amount)+'</td><td>'+fmt(s.interest||calcInterest(s.amount))+'</td><td>'+fmt(s.fee||5000)+'</td><td>'+fmt(s.totalRepay||calcTotal(s.amount))+'</td><td>'+fmt(s.paid||0)+'</td><td>'+fmt(s.balance)+'</td><td>'+(s.dueDate||'')+' '+(od?'<span style="color:red">OVERDUE</span>':'')+'</td><td>'+s.status+'</td></tr>'}).join("")+'</table><p style="font-size:11px">Lunyo Secret: Who took, who repaid, accumulative interest. Interest adds automatic when loan is created.</p>'; }
 function sendFB(where){ var txt = where==='main' ? $("fbMain").value : $("fbMember").value; if(!txt.trim()) return; live.feedback.unshift({text:txt, by: currentMember?currentMember.n : (currentAdminName||'Guest'), date:new Date().toLocaleString()}); saveFeedback(live.feedback); if(where==='main') $("fbMain").value=""; else $("fbMember").value=""; }
 function renderFeedback(){ var h=live.feedback.map(function(f){return '<div class="row"><span><b>'+f.by+':</b> '+f.text+'</span><small>'+f.date+'</small></div>'}).join(""); $("fbMainList").innerHTML=h; $("fbMemberList").innerHTML=h; $("fbAll").innerHTML=h; }
 function clearFB(){ if(confirm("Clear all feedback?")){ live.feedback=[]; saveFeedback([]); } }
@@ -209,7 +356,7 @@ function clearSig(){ if(sigCtx) sigCtx.clearRect(0,0,700,200); sigData=''; }
 function saveSig(){ sigData=$("sigCanvas").toDataURL(); alert("Signature saved"); }
 function clearSigAdmin(){ if(sigCtxA) sigCtxA.clearRect(0,0,700,200); sigDataAdmin=''; }
 function saveSigAdmin(){ sigDataAdmin=$("sigCanvasAdmin").toDataURL(); alert("Signature saved"); }
-startLiveListeners(); renderAdminSelects(); renderLoanTracking();
+startLiveListeners(); renderAdminSelects(); renderLoanTracking(); renderLunyoInterest();
 </script>
 </body>
 </html>
