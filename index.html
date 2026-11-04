@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WATEK KI LWAK - FIREBASE LIVE V52</title>
+<title>WATEK KI LWAK - FIREBASE LIVE V53 FIXED</title>
 <meta name="theme-color" content="#0f172a">
-<!-- FIREBASE - THIS MAKES IT LIVE -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
@@ -16,13 +15,14 @@
 .wrap{max-width:900px;margin:auto;padding:12px}.card{background:#fff;border-radius:14px;padding:16px;margin:14px 0;border:2px solid #e2e8f0}
 input,select,textarea{width:100%;padding:14px;border:2px solid #cbd5e1;border-radius:12px;margin:8px 0;font-size:16px}
 button{padding:14px;border:none;border-radius:12px;font-weight:800;cursor:pointer;width:100%;font-size:15px}
-.btn-green{background:#059669;color:#fff}.btn-blue{background:#1e40af;color:#fff}.btn-yellow{background:#fde047;color:#000}.btn-red{background:#ef4444;color:#fff}.btn-orange{background:#ea580c;color:#fff}.btn-gray{background:#e2e8f0;color:#000}.btn-purple{background:#7c3aed;color:#fff}
+.btn-green{background:#059669;color:#fff}.btn-blue{background:#1e40af;color:#fff}.btn-yellow{background:#fde047;color:#000}.btn-red{background:#ef4444;color:#fff}.btn-orange{background:#ea580c;color:#fff}.btn-gray{background:#e2e8f0;color:#000}.btn-purple{background:#7c3aed;color:#fff}.btn-black{background:#0f172a;color:#fde047}
 .hide{display:none}#suggestBox{border:3px solid #0f172a;border-radius:12px;max-height:320px;overflow:auto;background:#fff;position:absolute;left:0;right:0;top:100%;z-index:99}#suggestBox div{padding:14px;border-bottom:1px solid #eee;cursor:pointer}.searchWrap{position:relative}
 .row{display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;align-items:center;flex-wrap:wrap;gap:8px}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tab{padding:10px 14px;background:#e2e8f0;border-radius:20px;cursor:pointer;font-weight:800;font-size:12px}.tab.active{background:#0f172a;color:#fff;border:2px solid #fde047}
 canvas{border:3px solid #111;border-radius:12px;background:#fff;width:100%;height:200px;touch-action:none;display:block}.sig-wrap{background:#fff;padding:10px;border-radius:12px;border:3px solid #111;margin:8px 0}
 .notif-box{border:4px solid #ea580c;background:#fff7ed}.feedback-box{border:3px solid #7c3aed;background:#f5f3ff}
 .cloud-badge{background:#22c55e;color:#000;padding:6px 14px;border-radius:20px;font-weight:900;font-size:12px;display:inline-block;margin:8px 0}
+.secret-box{border:4px solid #ef4444;background:#1e1b4b;color:#fff;padding:14px;border-radius:14px;margin:14px 0}
 table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid #000;padding:6px;text-align:center}th{background:#0f172a;color:#fde047}
 .live-dot{width:10px;height:10px;background:#22c55e;border-radius:50%;display:inline-block;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}
 </style>
@@ -36,14 +36,15 @@ table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid 
 </div>
 
 <div class="wrap">
-<!-- PUBLIC / MEMBER LOGIN -->
+<!-- PUBLIC / MEMBER LOGIN - FIXED: NO AMOUNT WITH NAME -->
 <div id="publicPage">
 <div class="card" style="border:3px solid #059669">
 <h2 style="color:#059669;margin:0 0 12px 0">Member Login - LIVE</h2>
-<div class="searchWrap"><input id="memberName" type="text" placeholder="Type your name" oninput="searchName()" autocomplete="off"><div id="suggestBox" class="hide"></div></div>
+<p style="font-size:12px;color:#666;margin:0 0 8px 0">Type your name - Amount is hidden until you login.</p>
+<div class="searchWrap"><input id="memberName" type="text" placeholder="Type your name ONLY" oninput="searchName()" autocomplete="off"><div id="suggestBox" class="hide"></div></div>
 <input id="memberPhone" type="password" placeholder="Phone - Optional">
 <button onclick="memberLogin()" class="btn-green">LOGIN - Click to Open Account</button>
-<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button onclick="showAll()" class="btn-blue" style="flex:1">Show All Members - Tap Name to Open</button><button onclick="forceSync()" class="btn-gray" style="flex:1">🔄 Sync Now</button></div>
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button onclick="showAll()" class="btn-blue" style="flex:1">Show All Members - Names Only</button><button onclick="forceSync()" class="btn-gray" style="flex:1">🔄 Sync Now</button></div>
 <div id="loginResult" style="margin-top:12px"></div>
 <div id="allList" class="hide" style="max-height:400px;overflow:auto;border:3px solid #059669;padding:10px;margin-top:10px;background:#f0f4f8;border-radius:12px"></div>
 </div>
@@ -69,24 +70,41 @@ table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:2px solid 
 <!-- ADMIN PAGE -->
 <div id="adminPage" class="hide">
 <div class="card" style="background:#0f172a;color:#fff;border:3px solid #fde047;text-align:center"><h2 style="color:#fde047;margin:0" id="adminTitle">Admin Panel - LIVE</h2><div class="grand" id="adminGrand">GRAND TOTAL IS 0</div><div id="adminInfo" style="margin-top:8px;font-size:11px;color:#86efac"></div>
-<div class="card" style="border:3px solid #22c55e;background:#f0fdf4;padding:10px;margin-top:10px;text-align:left;color:#000"><h3 style="color:#059669;margin:0 0 8px 0">🔔 Secret - Admin Lunyo Only - Members Who Checked Account</h3><div id="balanceChecksList" style="max-height:400px;overflow:auto"></div><button onclick="clearBalanceChecks()" class="btn-gray" style="width:auto;padding:6px 12px;font-size:11px;margin-top:6px">Clear</button></div>
+<!-- ONLY LUNYO SEES WHO CHECKED -->
+<div class="card" id="lunyoCheckBox" style="border:3px solid #22c55e;background:#f0fdf4;padding:10px;margin-top:10px;text-align:left;color:#000"><h3 style="color:#059669;margin:0 0 8px 0">🔔 Secret - Admin Lunyo Only - Members Who Checked Account</h3><div id="balanceChecksList" style="max-height:400px;overflow:auto"></div><button onclick="clearBalanceChecks()" class="btn-gray" style="width:auto;padding:6px 12px;font-size:11px;margin-top:6px">Clear</button></div>
+<!-- SECRET STORAGE FOR LUNYO ONLY - LOAN RECORDS -->
+<div class="secret-box" id="lunyoSecretStorage">
+<h3 style="color:#fde047;margin:0">🔒 SECRET STORAGE - LUNYO ONLY</h3>
+<p style="font-size:12px;color:#fff;margin:8px 0">Loan applications are stored here secretly. Other admins cannot see this.</p>
+<button onclick="toggleSecretLoans()" class="btn-yellow" style="font-size:16px;padding:16px">Click here to see loans records</button>
+<div id="secretLoansBox" class="hide" style="margin-top:12px;background:#fff;color:#000;padding:12px;border-radius:10px;max-height:600px;overflow:auto"></div>
+</div>
 <button onclick="logoutAdmin()" class="btn-gray" style="width:auto;padding:10px 20px;margin-top:10px">Logout</button></div>
 <div class="card notif-box"><h3 style="color:#ea580c;margin-top:0">Notification - Broadcast - Live to All</h3><textarea id="adminBroad" placeholder="Type notification" rows="4" style="border:3px solid #ea580c"></textarea><button onclick="sendBroadcast()" class="btn-orange">Broadcast - Send to All Instantly</button><div id="broadList" style="max-height:400px;overflow:auto;margin-top:12px"></div></div>
 <div class="card"><div class="tabs"><button onclick="showTab('members')" id="btn-members" class="tab active">Members</button><button onclick="showTab('loan')" id="btn-loan" class="tab">Loans</button><button onclick="showTab('add')" id="btn-add" class="tab">Add Savings</button><button onclick="showTab('feedback')" id="btn-feedback" class="tab">Feedback</button></div>
 <div id="tab-members"><h3>Members - Live</h3><div class="card" style="border:3px solid #059669;background:#f0fdf4;padding:12px"><input id="newMemberName" placeholder="New member name"><input id="newMemberPhone" placeholder="Phone"><input id="newMemberSavings" type="number" placeholder="Savings amount"><button onclick="addMember()" class="btn-green">Add Member - All See Instantly</button></div>
 <select id="easyMem"></select><input id="easyAmt" type="number" placeholder="Amount to reduce"><div style="display:flex;gap:6px;margin:6px 0"><button onclick="setAmt(5000)" class="btn-gray" style="flex:1">-5k</button><button onclick="setAmt(10000)" class="btn-gray" style="flex:1">-10k</button><button onclick="setAmt(20000)" class="btn-gray" style="flex:1">-20k</button><button onclick="setAmt(50000)" class="btn-gray" style="flex:1">-50k</button></div><div id="easyPrev" style="background:#fff;padding:10px;border-radius:8px;border:2px solid #ef4444;font-size:12px;margin:6px 0">Select member</div><button onclick="reduce()" class="btn-red">Reduce - Live</button><input id="filterMem" placeholder="Search members" oninput="renderMembers()" style="margin-top:12px"><div id="membersList" style="max-height:500px;overflow:auto;margin-top:10px"></div></div>
 <div id="tab-loan" class="hide"><h3>Loans - Live</h3><select id="loanMem" onchange="previewLoanAdmin()"><option value="">Select member</option></select><div id="loanMemInfo" style="background:#fff;padding:10px;border-radius:8px;border:2px solid #059669;font-size:12px;margin:6px 0">Select member</div><input id="loanAmtAdmin" type="number" placeholder="Loan amount" oninput="previewLoanAdmin()"><input id="loanDateAdmin" type="date" oninput="previewLoanAdmin()"><input id="loanFeeAdmin" type="number" placeholder="Fee - Exactly 5000" value="5000" oninput="previewLoanAdmin()"><div class="sig-wrap"><p style="margin:0 0 8px 0;font-weight:800">Signature</p><canvas id="sigCanvasAdmin" width="700" height="200"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn-red" style="flex:1" onclick="clearSigAdmin()">Clear</button><button type="button" class="btn-green" style="flex:1" onclick="saveSigAdmin()">Save</button></div></div><div id="loanPreviewAdmin" style="background:#fff;padding:12px;border-radius:10px;border:2px solid #1e40af;font-size:12px;margin:8px 0">Select member</div><button onclick="createLoan()" style="background:#1e40af;color:#fff">Create Loan - Live</button><h3>Pending Approval</h3><div id="pendingLoans"></div><h3>All Loans</h3><div id="allLoans"></div><div style="background:#0f172a;color:#fff;padding:12px;border-radius:10px;margin-top:12px;text-align:center"><div>Total Outstanding:</div><div id="totalLoans" style="font-size:28px;color:#fde047;font-weight:900">0</div></div><h3>Repay Loan</h3><select id="repayMem" onchange="previewRepay()"><option value="">Select member</option></select><input id="repayAmt" type="number" placeholder="Repayment amount" oninput="previewRepay()"><div id="repayPrev" style="background:#fff;padding:10px;border-radius:10px;border:2px solid #059669;font-size:12px;margin:8px 0">Select member</div><button onclick="doRepay()" class="btn-green">Record Repayment - Live</button></div>
-<div id="tab-add" class="hide"><h3>Add Savings - Jan to Dec Weekly - Live</h3><select id="addMem" onchange="previewAdd()"><option value="">Select member</option></select><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:6px"><input id="w1" type="number" placeholder="W1" oninput="previewAdd()"><input id="w2" type="number" placeholder="W2" oninput="previewAdd()"><input id="w3" type="number" placeholder="W3" oninput="previewAdd()"><input id="w4" type="number" placeholder="W4" oninput="previewAdd()"></div><div style="background:#f8fafc;padding:10px;border-radius:8px;border:2px solid #000;font-size:12px;margin:8px 0"><div>Total: <b id="addTotal">0</b></div><div>Current: <b id="addCur">0</b></div><div>New: <b id="addNew">0</b></div><div>Grand After: <b id="addGrand">***</b></div></div><button onclick="addSaving()" style="background:#1e40af">Add Saving - Live</button></div>
+<div id="tab-add" class="hide"><h3>Add Savings - Live</h3><select id="addMem" onchange="previewAdd()"><option value="">Select member</option></select><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:6px"><input id="w1" type="number" placeholder="W1" oninput="previewAdd()"><input id="w2" type="number" placeholder="W2" oninput="previewAdd()"><input id="w3" type="number" placeholder="W3" oninput="previewAdd()"><input id="w4" type="number" placeholder="W4" oninput="previewAdd()"></div><div style="background:#f8fafc;padding:10px;border-radius:8px;border:2px solid #000;font-size:12px;margin:8px 0"><div>Total: <b id="addTotal">0</b></div><div>Current: <b id="addCur">0</b></div><div>New: <b id="addNew">0</b></div><div>Grand After: <b id="addGrand">***</b></div></div><button onclick="addSaving()" style="background:#1e40af">Add Saving - Live</button></div>
 <div id="tab-feedback" class="hide"><div class="card feedback-box"><h3 style="color:#7c3aed;margin-top:0">Feedback - Live</h3><div id="fbAll" style="max-height:700px;overflow:auto"></div><button onclick="clearFB()" class="btn-red" style="width:auto;padding:8px 14px;font-size:12px;margin-top:10px">Clear All Feedback</button></div></div>
 </div></div>
 
-<!-- ADMIN LOGIN -->
-<div id="secretAdmin" class="hide"><div class="card" style="background:#1e1b4b;color:#fff;border:3px solid #ef4444;text-align:center"><h2 style="color:#fde047;margin:0">Admin Sign In</h2><div style="background:#0f172a;padding:15px;border-radius:12px;border:2px solid #fde047;text-align:left"><input id="adminName" type="text" placeholder="Full admin name" style="background:#fff;color:#000;border:3px solid #fde047"><input id="adminPass" type="password" placeholder="Password" style="background:#fff;color:#000;border:3px solid #ef4444"><button onclick="adminLogin()" class="btn-yellow">Admin Sign In</button><div id="adminMsg" style="margin-top:10px"></div></div><button onclick="backPublic()" style="background:#e2e8f0;color:#000;width:auto;padding:12px 24px;border-radius:10px;margin-top:12px">Back</button></div></div>
+<!-- ADMIN LOGIN - FIXED - NOW WORKS -->
+<div id="secretAdmin" class="hide"><div class="card" style="background:#1e1b4b;color:#fff;border:3px solid #ef4444;text-align:center"><h2 style="color:#fde047;margin:0">Admin Sign In - FIXED</h2><div style="background:#0f172a;padding:15px;border-radius:12px;border:2px solid #fde047;text-align:left">
+<label style="font-size:12px;color:#fde047">1. Choose Admin Type</label>
+<select id="adminRole" style="background:#fff;color:#000;border:3px solid #fde047"><option value="lunyo">LUNYO ADMIN - Main</option><option value="savings">SAVINGS ADMIN</option><option value="loans">LOANS ADMIN</option></select>
+<label style="font-size:12px;color:#fde047">2. Admin Name (any name)</label>
+<input id="adminName" type="text" placeholder="e.g. Lunyo" style="background:#fff;color:#000;border:3px solid #fde047">
+<label style="font-size:12px;color:#fde047">3. Password</label>
+<input id="adminPass" type="password" placeholder="Password" style="background:#fff;color:#000;border:3px solid #ef4444">
+<button onclick="adminLogin()" class="btn-yellow">Admin Sign In - Tap Here</button>
+<div id="adminMsg" style="margin-top:10px"></div>
+<div style="background:#fff;color:#000;padding:10px;border-radius:8px;margin-top:10px;font-size:12px"><b>Demo Passwords - Works Now:</b><br>LUNYO: <b>1234</b><br>SAVINGS ADMIN: <b>2345</b><br>LOANS ADMIN: <b>3456</b><br><br>If you type wrong password, it will tell you.</div>
+</div><button onclick="backPublic()" style="background:#e2e8f0;color:#000;width:auto;padding:12px 24px;border-radius:10px;margin-top:12px">Back</button></div></div>
 </div>
 <div style="text-align:center;padding:16px;font-size:11px;color:#888"><span style="background:#22c55e;color:#000;padding:4px 10px;border-radius:12px;font-weight:800">🔥 FIREBASE LIVE - lunyo-savings.vercel.app</span><br><br><a href="#" onclick="goAdmin();return false;" style="color:#666">Admin Sign In</a></div>
 
 <script>
-// ================= FIREBASE CONFIG - PASTE YOURS HERE =================
 const firebaseConfig = {
   apiKey: "PASTE_YOUR_API_KEY",
   authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
@@ -96,48 +114,31 @@ const firebaseConfig = {
   messagingSenderId: "PASTE_SENDER_ID",
   appId: "PASTE_APP_ID"
 };
-// =======================================================================
 let DB=null, USE_FIREBASE=false;
 try{ if(firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf("PASTE")<0){ firebase.initializeApp(firebaseConfig); DB=firebase.database(); USE_FIREBASE=true; } }catch(e){ USE_FIREBASE=false; }
-
 var currentMember=null, currentRole='', currentAdminName='', sigData='', sigDataAdmin='', deferredPrompt=null;
 function $(id){return document.getElementById(id)}
 function fmt(n){return Number(n||0).toLocaleString()}
 function installApp(){if(deferredPrompt){deferredPrompt.prompt()}else{alert("Chrome Menu -> Install App")}}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e});
-
-// ===== LIVE DATA - SINGLE SOURCE OF TRUTH IS FIREBASE =====
 var initialData=[{"n":"Oyuru Benard","p":"785107607","t":370000},{"n":"Opio Clvin","p":"773143405","t":230000},{"n":"Choda Charlse","p":"775693534","t":25000},{"n":"Ocen moses","p":"789887596","t":465000},{"n":"Oyuku Dickens","p":"775420262","t":95000},{"n":"Adokorach Stella","p":"740931151","t":0},{"n":"Dhone Lwarence","p":"774106952","t":1200000},{"n":"Lrua Sidonia","p":"785772021","t":310000},{"n":"Opio Tonny Okwor","p":"783302588","t":0},{"n":"Dembe Ben","p":"763282058","t":190000},{"n":"Okema Bosco","p":"778886622","t":204000},{"n":"Omara Bashir","p":"772359907","t":149500},{"n":"Ojota Haron","p":"760883037","t":205000},{"n":"Mama Aisha","p":"788605576","t":130000},{"n":"Okello Hillary","p":"757240422","t":175000},{"n":"Opudu Walter","p":"778622828","t":128000},{"n":"Okello Issac Bet","p":"771368808","t":205000},{"n":"Okello Ambrose","p":"783014095","t":85000},{"n":"Okello Jonathan","p":"774987163","t":50000},{"n":"Elwelo Sam","p":"777248151","t":107000},{"n":"Tenga James","p":"771406067","t":255000},{"n":"Okeng Tom","p":"776871097","t":820000},{"n":"Otwal Santos","p":"771821770","t":30000},{"n":"Elwelo Ronald","p":"768605926","t":15000},{"n":"Kyompire Adrine","p":"782164034","t":0},{"n":"Okwir Emmanuel","p":"740818605","t":35000},{"n":"Eseru Simon","p":"774711693","t":70000},{"n":"Lea Ogwal","p":"","t":145000},{"n":"Ruth","p":"789088126","t":320000},{"n":"Odongo Leon","p":"785800210","t":30000},{"n":"Okello Robin","p":"","t":50000},{"n":"Olweny Moses","p":"746248356","t":0},{"n":"Ateng Evalene","p":"","t":20000},{"n":"Elet Erick","p":"782120035","t":530000},{"n":"Abura Solomon","p":"766229386","t":3575000},{"n":"Winny Anyango","p":"774632098","t":355000},{"n":"Okello Ambrose Denis","p":"772596832","t":0},{"n":"Lukuda John Paul","p":"746162257","t":80000},{"n":"Ongu Keneth","p":"7745292996","t":45000},{"n":"Okello willy","p":"","t":80000},{"n":"Omara bonny","p":"","t":150000},{"n":"Okunya Erick","p":"","t":0},{"n":"Omara Calvin","p":"","t":270000}];
-
-var live = { members: JSON.parse(JSON.stringify(initialData)), loans: [], feedback: [], broadcasts: [], checks: [], memberNotifs: [] };
-
+var live = { members: JSON.parse(JSON.stringify(initialData)), loans: [], feedback: [], broadcasts: [], checks: [], memberNotifs: [], secretLoans: [] };
 function saveLive(key, value){ if(USE_FIREBASE && DB){ DB.ref('watek/'+key).set(value); } else { try{ localStorage.setItem('watek_live_'+key, JSON.stringify(value)); }catch(e){} } }
-function loadLocalFallback(){ try{ var m=localStorage.getItem('watek_live_members'); if(m) live.members=JSON.parse(m); }catch(e){} }
-
-// 🔥 THE MAGIC - LISTEN LIVE - WHEN ADMIN CHANGES, EVERY PHONE UPDATES IN 1 SEC
+function loadLocalFallback(){ try{ var m=localStorage.getItem('watek_live_members'); if(m) live.members=JSON.parse(m); var l=localStorage.getItem('watek_live_loans'); if(l) live.loans=JSON.parse(l); var s=localStorage.getItem('watek_live_secretLoans'); if(s) live.secretLoans=JSON.parse(s); }catch(e){} }
 function startLiveListeners(){
   if(!USE_FIREBASE || !DB){ $("connText").innerText="Offline Mode - Paste Firebase Config to go Live"; loadLocalFallback(); refreshAll(); return; }
   $("connText").innerText="LIVE - Connected";
-  ['members','loans','feedback','broadcasts','checks','memberNotifs'].forEach(function(key){
+  ['members','loans','feedback','broadcasts','checks','memberNotifs','secretLoans'].forEach(function(key){
     DB.ref('watek/'+key).on('value', function(snap){
       var v = snap.val();
-      if(v===null || v===undefined){
-        // First time - seed members only once
-        if(key==='members'){ DB.ref('watek/members').set(live.members); }
-        return;
-      }
-      // Firebase returns object for arrays - convert back
+      if(v===null || v===undefined){ if(key==='members'){ DB.ref('watek/members').set(live.members); } return; }
       if(Array.isArray(v)) live[key]=v; else if(typeof v==='object'){ live[key]=Object.values(v); } else live[key]=v;
-      refreshAll();
-      // If current member is open, refresh his own view instantly
-      if(currentMember) refreshMemberView();
+      refreshAll(); if(currentMember) refreshMemberView();
     });
   });
-  // Connection status
   DB.ref('.info/connected').on('value', function(s){ $("connText").innerText = s.val() ? "LIVE - Connected" : "Reconnecting..."; });
 }
-function forceSync(){ if(USE_FIREBASE) alert("Already Live - Auto Sync ON"); else alert("Paste Firebase Config to enable Live Sync"); refreshAll(); }
-
+function forceSync(){ refreshAll(); alert(USE_FIREBASE?"Already Live - Auto Sync ON":"Offline - Paste Firebase Config"); }
 function getMembers(){ return live.members; }
 function saveMembers(m){ live.members=m; saveLive('members', m); refreshAll(); }
 function getLoans(){ return live.loans; }
@@ -148,7 +149,7 @@ function getBroadcasts(){ return live.broadcasts; }
 function saveBroadcasts(b){ live.broadcasts=b; saveLive('broadcasts', b); }
 function getChecks(){ return live.checks; }
 function saveChecks(c){ live.checks=c; saveLive('checks', c); }
-
+function saveSecretLoans(s){ live.secretLoans=s; saveLive('secretLoans', s); }
 function updateGrand(){
   var total = live.members.reduce(function(a,b){return a+Number(b.t||0)},0);
   var loanTotal = live.loans.filter(function(l){return l.status!=='paid' && l.status!=='rejected'}).reduce(function(a,b){return a+Number(b.balance||b.amount||0)},0);
@@ -157,30 +158,28 @@ function updateGrand(){
   if($("totalLoans")) $("totalLoans").innerText=fmt(loanTotal);
   return total;
 }
-
-function refreshAll(){ updateGrand(); renderMembers(); renderLoans(); renderMyLoans(); renderFeedback(); renderAdminNotifs(); renderMyAdminNotifs(); renderChecks(); if(currentMember) refreshMemberView(); }
-
-// ===== SEARCH / LOGIN =====
+function refreshAll(){ updateGrand(); renderMembers(); renderLoans(); renderMyLoans(); renderFeedback(); renderAdminNotifs(); renderMyAdminNotifs(); renderChecks(); renderSecretLoans(); if(currentMember) refreshMemberView(); }
+// ===== FIX 1: NAME WITHOUT AMOUNT =====
 function searchName(){
   var q=$("memberName").value.trim().toLowerCase(); var box=$("suggestBox");
   if(q.length<2){box.classList.add("hide");return}
   var matches=live.members.filter(function(m){return m.n.toLowerCase().includes(q)}).slice(0,10);
   if(!matches.length){box.classList.add("hide");return}
-  box.innerHTML=matches.map(function(m){return '<div onclick="pickName(\''+m.n.replace(/'/g,"\\'")+'\')">'+m.n+' - '+fmt(m.t)+'</div>'}).join(""); box.classList.remove("hide");
+  // ONLY NAME - NO AMOUNT
+  box.innerHTML=matches.map(function(m){return '<div onclick="pickName(\''+m.n.replace(/'/g,"\\'")+'\')">'+m.n+'</div>'}).join(""); box.classList.remove("hide");
 }
 function pickName(n){ $("memberName").value=n; $("suggestBox").classList.add("hide"); }
 function showAll(){
   var box=$("allList"); box.classList.toggle("hide");
-  box.innerHTML=live.members.map(function(m){return '<div class="row"><b>'+m.n+'</b><span>'+fmt(m.t)+'</span><button onclick="pickName(\''+m.n.replace(/'/g,"\\'")+'\');document.getElementById(\'allList\').classList.add(\'hide\')" class="btn-blue" style="width:auto;padding:6px 12px">Open</button></div>'}).join("");
+  // ONLY NAME - NO AMOUNT
+  box.innerHTML=live.members.map(function(m){return '<div class="row"><b>'+m.n+'</b><button onclick="pickName(\''+m.n.replace(/'/g,"\\'")+'\');document.getElementById(\'allList\').classList.add(\'hide\')" class="btn-blue" style="width:auto;padding:6px 12px">Open</button></div>'}).join("");
 }
 function clearAll(){ if(confirm("Clear local cache? Live data stays in Firebase.")){ localStorage.clear(); location.reload(); } }
-
 function memberLogin(){
   var name=$("memberName").value.trim(); if(!name){alert("Type your name");return}
   var m=live.members.find(function(x){return x.n.toLowerCase()===name.toLowerCase()});
   if(!m){ if(confirm("Name not found. Create as new member?")){ m={n:name,p:$("memberPhone").value||"",t:0}; live.members.push(m); saveMembers(live.members); } else return; }
   currentMember=m;
-  // 🔔 LOG CHECK - ONLY LUNYO SEES THIS - SAVED TO FIREBASE INSTANTLY
   var chk={name:m.n, date:new Date().toISOString().slice(0,10), time:new Date().toLocaleTimeString()};
   live.checks.unshift(chk); saveChecks(live.checks.slice(0,100));
   $("publicPage").classList.add("hide"); $("memberPage").classList.remove("hide"); $("secretAdmin").classList.add("hide"); $("adminPage").classList.add("hide");
@@ -190,79 +189,67 @@ function refreshMemberView(){
   if(!currentMember) return;
   var fresh=live.members.find(function(x){return x.n===currentMember.n}); if(fresh) currentMember=fresh;
   $("mySavings").innerText=fmt(currentMember.t||0); $("myMax").innerText=fmt(Math.floor((currentMember.t||0)*0.8));
-  var rec='<table><tr><th>Date</th><th>Type</th><th>Amount</th></tr><tr><td>Current</td><td>Total Savings</td><td>'+fmt(currentMember.t)+'</td></tr></table><p>Weekly record is updated live by admin.</p>';
-  $("savingsRecordDetails").innerHTML=rec;
+  $("savingsRecordDetails").innerHTML='<table><tr><th>Date</th><th>Type</th><th>Amount</th></tr><tr><td>Current</td><td>Total Savings</td><td>'+fmt(currentMember.t)+'</td></tr></table><p>Weekly record is updated live by admin.</p>';
   renderMyLoans();
 }
 function logoutMember(){ currentMember=null; $("memberPage").classList.add("hide"); $("publicPage").classList.remove("hide"); }
 function toggleSavingsRecord(){ $("savingsRecordBox").classList.toggle("hide"); }
 function toggleLoan(){ $("loanForm").classList.toggle("hide"); }
-function previewLoan(){
-  var amt=Number($("loanAmt").value||0), fee=Number($("loanFee").value||5000);
-  $("loanPreview").innerHTML="Amount: "+fmt(amt)+" | Fee: "+fmt(fee)+" | Total to repay: "+fmt(amt+fee)+" | Max allowed: "+fmt(Math.floor((currentMember.t||0)*0.8));
-}
+function previewLoan(){ var amt=Number($("loanAmt").value||0), fee=Number($("loanFee").value||5000); $("loanPreview").innerHTML="Amount: "+fmt(amt)+" | Fee: "+fmt(fee)+" | Total to repay: "+fmt(amt+fee)+" | Max allowed: "+fmt(Math.floor((currentMember.t||0)*0.8)); }
 function applyLoan(){
   var amt=Number($("loanAmt").value||0); if(!amt){alert("Enter amount");return}
   if(amt > Math.floor((currentMember.t||0)*0.8)){ alert("Exceeds 80% max"); return; }
   var loan={id:Date.now(), member:currentMember.n, amount:amt, balance:amt+5000, fee:5000, date:$("loanDate").value||new Date().toISOString().slice(0,10), status:'pending', sig:sigData||''};
   live.loans.push(loan); saveLoans(live.loans);
-  // Notify admins live
+  // SECRET STORAGE FOR LUNYO ONLY - COPY LOAN HERE
+  var secret={id:loan.id, member:currentMember.n, amount:amt, balance:amt+5000, date:loan.date, time:new Date().toLocaleTimeString(), status:'pending'};
+  live.secretLoans.unshift(secret); saveSecretLoans(live.secretLoans.slice(0,200));
   var n={to:'admin', text:currentMember.n+" applied for loan "+fmt(amt), date:new Date().toLocaleString()};
   live.memberNotifs.unshift(n); saveLive('memberNotifs', live.memberNotifs);
-  $("loanMsg").innerHTML="<b style='color:green'>✅ Submitted - Admin will approve - You will see it LIVE</b>"; renderMyLoans();
+  $("loanMsg").innerHTML="<b style='color:green'>✅ Submitted - Admin will approve - You will see it LIVE</b>"; renderMyLoans(); renderSecretLoans();
 }
 function renderMyLoans(){
   if(!currentMember) return;
   var mine=live.loans.filter(function(l){return l.member===currentMember.n});
   $("myLoansList").innerHTML = mine.length ? mine.map(function(l){return '<div class="row"><span>'+l.date+' - '+fmt(l.amount)+' - '+l.status+'</span><b>Balance: '+fmt(l.balance)+'</b></div>'}).join("") : "No loans yet";
-  // Admin views
   $("pendingLoans").innerHTML = live.loans.filter(function(l){return l.status==='pending'}).map(function(l){return '<div class="row"><span>'+l.member+' - '+fmt(l.amount)+'</span><div><button onclick="approveLoan('+l.id+')" class="btn-green" style="width:auto;padding:6px 12px">Approve</button> <button onclick="rejectLoan('+l.id+')" class="btn-red" style="width:auto;padding:6px 12px">Reject</button></div></div>'}).join("") || "No pending";
   $("allLoans").innerHTML = live.loans.map(function(l){return '<div class="row"><span>'+l.member+' - '+fmt(l.amount)+' - '+l.status+'</span><b>'+fmt(l.balance)+'</b></div>'}).join("") || "No loans";
 }
-function approveLoan(id){ var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='approved'; saveLoans(live.loans); alert("Approved - Member sees it instantly ✅");} }
-function rejectLoan(id){ var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='rejected'; saveLoans(live.loans);} }
-
-// ===== ADMIN =====
+function approveLoan(id){ var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='approved'; saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.id==id}); if(s){s.status='approved'; saveSecretLoans(live.secretLoans);} alert("Approved - Member sees it instantly ✅");} }
+function rejectLoan(id){ var l=live.loans.find(function(x){return x.id==id}); if(l){l.status='rejected'; saveLoans(live.loans); var s=live.secretLoans.find(function(x){return x.id==id}); if(s){s.status='rejected'; saveSecretLoans(live.secretLoans);} } }
+// ===== FIX 2: ADMIN LOGIN NOW WORKS =====
 function goAdmin(){ $("publicPage").classList.add("hide"); $("secretAdmin").classList.remove("hide"); }
 function backPublic(){ $("secretAdmin").classList.add("hide"); $("publicPage").classList.remove("hide"); }
 function adminLogin(){
-  var name=$("adminName").value.trim(), pass=$("adminPass").value.trim();
-  // Demo logins - Change these in Firebase later
-  var admins={ "lunyo":"1234", "savings":"1234", "loans":"1234", "admin":"1234" };
-  var key=name.toLowerCase();
-  if(admins[key] && admins[key]===pass){
-    currentAdminName=name; currentRole=key;
+  var role=$("adminRole").value; // lunyo / savings / loans
+  var name=$("adminName").value.trim(); if(!name){ $("adminMsg").innerHTML="<b style='color:red'>Enter your admin name</b>"; return; }
+  var pass=$("adminPass").value.trim();
+  var passwords={ lunyo:"1234", savings:"2345", loans:"3456" };
+  if(pass===passwords[role]){
+    currentAdminName=name; currentRole=role;
     $("secretAdmin").classList.add("hide"); $("adminPage").classList.remove("hide");
-    $("adminTitle").innerText="Admin Panel - "+name.toUpperCase()+" - LIVE";
-    $("adminInfo").innerText = key==='lunyo' ? "🔔 Lunyo: You get notified when member checks" : "You see same Admin Panel. Only Lunyo gets check notifications.";
+    $("adminTitle").innerText="Admin Panel - "+name.toUpperCase()+" ("+role.toUpperCase()+") - LIVE";
+    $("adminInfo").innerText = role==='lunyo' ? "🔔 Lunyo: You get notified + Secret Storage" : "You see same Admin Panel. Only Lunyo gets check notifications + Secret Storage.";
+    // SHOW / HIDE SECRET PARTS BASED ON ROLE
+    if(role==='lunyo'){ $("lunyoCheckBox").classList.remove("hide"); $("lunyoSecretStorage").classList.remove("hide"); }
+    else { $("lunyoCheckBox").classList.add("hide"); $("lunyoSecretStorage").classList.add("hide"); }
+    $("adminMsg").innerHTML="";
     refreshAll(); renderAdminSelects();
-  } else { $("adminMsg").innerHTML="<b style='color:red'>Wrong name/password. Demo: lunyo / 1234</b>"; }
+    alert("Welcome "+name+" ✅ Login Successful");
+  } else {
+    $("adminMsg").innerHTML="<b style='color:red'>❌ Wrong password for "+role.toUpperCase()+". Try: Lunyo=1234, Savings=2345, Loans=3456</b>";
+  }
 }
 function logoutAdmin(){ $("adminPage").classList.add("hide"); $("publicPage").classList.remove("hide"); currentRole=''; }
-function renderAdminSelects(){
-  var opts='<option value="">Select member</option>'+live.members.map(function(m){return '<option>'+m.n+'</option>'}).join("");
-  ["easyMem","loanMem","repayMem","addMem"].forEach(function(id){ if($(id)) $(id).innerHTML=opts; });
-}
-function showTab(t){
-  ['members','loan','add','feedback'].forEach(function(x){ $("tab-"+x).classList.add("hide"); $("btn-"+x).classList.remove("active"); });
-  $("tab-"+t).classList.remove("hide"); $("btn-"+t).classList.add("active");
-}
-function addMember(){
-  var n=$("newMemberName").value.trim(); if(!n){alert("Enter name");return}
-  live.members.push({n:n, p:$("newMemberPhone").value||"", t:Number($("newMemberSavings").value||0)});
-  saveMembers(live.members); $("newMemberName").value=""; $("newMemberSavings").value=""; alert("Added - All phones see it instantly ✅"); renderAdminSelects();
-}
+function renderAdminSelects(){ var opts='<option value="">Select member</option>'+live.members.map(function(m){return '<option>'+m.n+'</option>'}).join(""); ["easyMem","loanMem","repayMem","addMem"].forEach(function(id){ if($(id)) $(id).innerHTML=opts; }); }
+function showTab(t){ ['members','loan','add','feedback'].forEach(function(x){ $("tab-"+x).classList.add("hide"); $("btn-"+x).classList.remove("active"); }); $("tab-"+t).classList.remove("hide"); $("btn-"+t).classList.add("active"); }
+function addMember(){ var n=$("newMemberName").value.trim(); if(!n){alert("Enter name");return} live.members.push({n:n, p:$("newMemberPhone").value||"", t:Number($("newMemberSavings").value||0)}); saveMembers(live.members); $("newMemberName").value=""; $("newMemberSavings").value=""; alert("Added - All phones see it instantly ✅"); renderAdminSelects(); }
 function setAmt(v){ $("easyAmt").value=v; previewEasy(); }
 function previewEasy(){ var n=$("easyMem").value; var m=live.members.find(function(x){return x.n===n}); if(m) $("easyPrev").innerHTML="Member: "+m.n+" | Current: "+fmt(m.t)+" | Reduce: "+fmt($("easyAmt").value||0)+" | New: "+fmt(m.t-Number($("easyAmt").value||0)); }
 function reduce(){ var n=$("easyMem").value, amt=Number($("easyAmt").value||0); var m=live.members.find(function(x){return x.n===n}); if(!m){alert("Select member");return} m.t=Math.max(0,m.t-amt); saveMembers(live.members); alert("Reduced - Member sees instantly ✅"); }
-function renderMembers(){
-  var q=($("filterMem").value||"").toLowerCase();
-  var list=live.members.filter(function(m){return m.n.toLowerCase().includes(q)});
-  $("membersList").innerHTML=list.map(function(m){return '<div class="row"><b>'+m.n+'</b><span>'+fmt(m.t)+'</span><span>'+m.p+'</span></div>'}).join("");
-  renderAdminSelects();
-}
+function renderMembers(){ var q=($("filterMem").value||"").toLowerCase(); var list=live.members.filter(function(m){return m.n.toLowerCase().includes(q)}); $("membersList").innerHTML=list.map(function(m){return '<div class="row"><b>'+m.n+'</b><span>'+fmt(m.t)+'</span><span>'+m.p+'</span></div>'}).join(""); renderAdminSelects(); }
 function previewLoanAdmin(){ var n=$("loanMem").value; var m=live.members.find(function(x){return x.n===n}); if(!m){$("loanMemInfo").innerText="Select member";return} $("loanMemInfo").innerHTML="Savings: "+fmt(m.t)+" | Max 80%: "+fmt(Math.floor(m.t*0.8)); $("loanPreviewAdmin").innerHTML="Amount: "+fmt($("loanAmtAdmin").value||0)+" | Fee: "+fmt($("loanFeeAdmin").value||5000); }
-function createLoan(){ var n=$("loanMem").value, amt=Number($("loanAmtAdmin").value||0); if(!n||!amt){alert("Select member + amount");return} live.loans.push({id:Date.now(), member:n, amount:amt, balance:amt+5000, fee:5000, date:$("loanDateAdmin").value||new Date().toISOString().slice(0,10), status:'approved', sig:sigDataAdmin||''}); saveLoans(live.loans); alert("Loan Created - Member sees instantly ✅"); }
+function createLoan(){ var n=$("loanMem").value, amt=Number($("loanAmtAdmin").value||0); if(!n||!amt){alert("Select member + amount");return} var loan={id:Date.now(), member:n, amount:amt, balance:amt+5000, fee:5000, date:$("loanDateAdmin").value||new Date().toISOString().slice(0,10), status:'approved', sig:sigDataAdmin||''}; live.loans.push(loan); saveLoans(live.loans); var secret={id:loan.id, member:n, amount:amt, balance:amt+5000, date:loan.date, time:new Date().toLocaleTimeString(), status:'approved'}; live.secretLoans.unshift(secret); saveSecretLoans(live.secretLoans.slice(0,200)); alert("Loan Created - Member sees instantly ✅ + Saved in Lunyo Secret Storage"); }
 function previewRepay(){ var n=$("repayMem").value; var tot=live.loans.filter(function(l){return l.member===n && l.status!=='paid'}).reduce(function(a,b){return a+Number(b.balance||0)},0); $("repayPrev").innerHTML="Outstanding: "+fmt(tot)+" | Repay: "+fmt($("repayAmt").value||0); }
 function doRepay(){ var n=$("repayMem").value, amt=Number($("repayAmt").value||0); var loans=live.loans.filter(function(l){return l.member===n && l.status!=='paid'}); if(!loans.length){alert("No loan");return} var left=amt; loans.forEach(function(l){ if(left<=0) return; var pay=Math.min(left,l.balance); l.balance-=pay; left-=pay; if(l.balance<=0) l.status='paid'; }); saveLoans(live.loans); alert("Repayment recorded - Live ✅"); }
 function previewAdd(){ var n=$("addMem").value; var m=live.members.find(function(x){return x.n===n}); var total=(Number($("w1").value||0)+Number($("w2").value||0)+Number($("w3").value||0)+Number($("w4").value||0)); $("addTotal").innerText=fmt(total); if(m){$("addCur").innerText=fmt(m.t); $("addNew").innerText=fmt(m.t+total); $("addGrand").innerText=fmt(updateGrand()+total);} }
@@ -271,27 +258,30 @@ function sendBroadcast(){ var t=$("adminBroad").value.trim(); if(!t) return; liv
 function renderAdminNotifs(){ $("broadList").innerHTML=live.broadcasts.map(function(b){return '<div class="row"><span>'+b.text+'</span><small>'+b.date+'</small></div>'}).join(""); $("homeNotifs").innerHTML=$("broadList").innerHTML; }
 function renderMyAdminNotifs(){ $("myAdminNotifs").innerHTML=live.broadcasts.map(function(b){return '<div class="row"><span>'+b.text+'</span><small>'+b.date+'</small></div>'}).join(""); $("myTransNotifs").innerHTML=live.memberNotifs.filter(function(n){return !currentMember || n.text.includes(currentMember.n)}).map(function(n){return '<div class="row"><span>'+n.text+'</span><small>'+n.date+'</small></div>'}).join("") || "No private notifications"; }
 function renderChecks(){
-  // ONLY LUNYO SEES CHECKS - OTHERS SEE HIDDEN MESSAGE
   if(currentRole==='lunyo'){ $("balanceChecksList").innerHTML=live.checks.map(function(c){return '<div class="row"><b>'+c.name+'</b><span>'+c.date+' '+c.time+'</span></div>'}).join("") || "No checks yet"; }
-  else { $("balanceChecksList").innerHTML="<i>Only Lunyo Admin is notified when a member checks. Your panel stays the same.</i>"; }
+  else { $("balanceChecksList").innerHTML="<i>Only Lunyo Admin is notified when a member checks.</i>"; }
 }
 function clearBalanceChecks(){ if(currentRole!=='lunyo'){alert("Only Lunyo can clear");return} live.checks=[]; saveChecks([]); }
+// ===== FIX 4: SECRET STORAGE - LUNYO ONLY =====
+function toggleSecretLoans(){ if(currentRole!=='lunyo'){alert("Only Lunyo can see this");return} $("secretLoansBox").classList.toggle("hide"); renderSecretLoans(); }
+function renderSecretLoans(){
+  if(currentRole!=='lunyo'){ return; }
+  var box=$("secretLoansBox");
+  if(!box) return;
+  if(!live.secretLoans.length){ box.innerHTML="No loan applications yet - When a member applies, it will appear here secretly."; return; }
+  box.innerHTML='<table><tr><th>Member</th><th>Amount</th><th>Balance</th><th>Date</th><th>Time</th><th>Status</th></tr>'+live.secretLoans.map(function(s){return '<tr><td>'+s.member+'</td><td>'+fmt(s.amount)+'</td><td>'+fmt(s.balance)+'</td><td>'+s.date+'</td><td>'+(s.time||'')+'</td><td>'+s.status+'</td></tr>'}).join("")+'</table><p style="font-size:11px;color:#666">Total Secret Loans: '+live.secretLoans.length+'</p>';
+}
 function sendFB(where){ var txt = where==='main' ? $("fbMain").value : $("fbMember").value; if(!txt.trim()) return; live.feedback.unshift({text:txt, by: currentMember?currentMember.n : (currentAdminName||'Guest'), date:new Date().toLocaleString()}); saveFeedback(live.feedback); if(where==='main') $("fbMain").value=""; else $("fbMember").value=""; }
 function renderFeedback(){ var h=live.feedback.map(function(f){return '<div class="row"><span><b>'+f.by+':</b> '+f.text+'</span><small>'+f.date+'</small></div>'}).join(""); $("fbMainList").innerHTML=h; $("fbMemberList").innerHTML=h; $("fbAll").innerHTML=h; }
 function clearFB(){ if(confirm("Clear all feedback?")){ live.feedback=[]; saveFeedback([]); } }
 function renderLoans(){ renderMyLoans(); }
-
-// Signature
 function setupSig(id, setter){ var c=$(id); if(!c) return; var ctx=c.getContext('2d'); var drawing=false; function pos(e){ var r=c.getBoundingClientRect(); var t=e.touches?e.touches[0]:e; return {x:(t.clientX-r.left)*(c.width/r.width), y:(t.clientY-r.top)*(c.height/r.height)}; } c.addEventListener('mousedown',function(e){drawing=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y)}); c.addEventListener('mousemove',function(e){if(!drawing) return; var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke()}); window.addEventListener('mouseup',function(){drawing=false}); c.addEventListener('touchstart',function(e){e.preventDefault(); drawing=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y)}); c.addEventListener('touchmove',function(e){e.preventDefault(); if(!drawing) return; var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke()}); c.addEventListener('touchend',function(){drawing=false}); setter(ctx); }
 var sigCtx=null, sigCtxA=null; setupSig('sigCanvas', function(c){sigCtx=c}); setupSig('sigCanvasAdmin', function(c){sigCtxA=c});
 function clearSig(){ if(sigCtx) sigCtx.clearRect(0,0,700,200); sigData=''; }
 function saveSig(){ sigData=$("sigCanvas").toDataURL(); alert("Signature saved"); }
 function clearSigAdmin(){ if(sigCtxA) sigCtxA.clearRect(0,0,700,200); sigDataAdmin=''; }
 function saveSigAdmin(){ sigDataAdmin=$("sigCanvasAdmin").toDataURL(); alert("Signature saved"); }
-
-// START
-startLiveListeners();
-renderAdminSelects();
+startLiveListeners(); renderAdminSelects();
 </script>
 </body>
 </html>
